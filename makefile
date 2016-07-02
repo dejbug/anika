@@ -1,7 +1,7 @@
 
 LDFLAGS:=-Wl,--subsystem=windows
-LDFLAGS:=
-CXXFLAGS:=-Wall
+LDFLAGS:=-lgdi32
+CXXFLAGS:=-Wall -Wno-unused-variable
 
 INC_DIRS:=\
 	"c:\Programme\3\libpng\include"

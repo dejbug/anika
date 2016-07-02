@@ -2,20 +2,45 @@
 #include <windows.h>
 
 
-struct window_rect_t : public RECT
+struct window_rect_base_t
 {
+	RECT rect;
 	long width, height;
-	long const& x, y, w, h;
+	long &left, &top, &right, &bottom;
+	long &l, &t, &r, &b;
+	long &x, &y, &w, &h;
 	
-	window_rect_t(HWND handle, bool client=false)
-		: x(left), y(top), w(width), h(height)
+	window_rect_base_t()
+	:	width(0), height(0),
+		left(rect.left), top(rect.top),
+		right(rect.right), bottom(rect.bottom),
+		l(left), t(top), r(right), b(bottom),
+		x(left), y(top), w(width), h(height)
 	{
-		update(handle, client);
+		left = top = right = bottom = 0;
+	}
+};
+
+
+struct window_rect_t : public window_rect_base_t
+{
+	HWND parent;
+	
+	window_rect_t(HWND parent, bool client=false)
+	:	parent(parent)
+	{
+		update(client);
 	}
 	
-	void update(HWND handle, bool client=false)
+	window_rect_t(HDC hdc, bool client=false)
+	:	parent(WindowFromDC(hdc))
 	{
-		if(!handle)
+		update(client);
+	}
+	
+	void update(bool client=false)
+	{
+		if(!parent)
 		{
 			left = top = 0;
 			right = GetSystemMetrics(SM_CXSCREEN);
@@ -23,10 +48,10 @@ struct window_rect_t : public RECT
 		}
 		else
 		{
-			if(client)
-				GetClientRect(handle, this);
-			else
-				GetWindowRect(handle, this);
+			BOOL(WINAPI *method_f)(HWND,LPRECT) =
+				client ? GetClientRect : GetWindowRect;
+			
+			method_f(parent, &rect);
 		}
 		
 		width = right - left;
@@ -35,13 +60,13 @@ struct window_rect_t : public RECT
 	
 	SIZE size() const
 	{
-		const SIZE s = {right-left, bottom-top};
+		const SIZE s = {w, h};
 		return s;
 	}
 	
 	POINT pos() const
 	{
-		const POINT p = {left, top};
+		const POINT p = {x, y};
 		return p;
 	}
 };
