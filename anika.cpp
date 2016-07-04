@@ -11,46 +11,41 @@
 #include "window_rect_t.h"
 #include "temp_color_setter_t.h"
 #include "temp_object_t.h"
+#include "canvas_t.h"
+#include "context_t.h"
 #include "mdc_t.h"
+#include "line_t.h"
+#include "color_t.h"
 
 #include "win.h"
 
 
-struct canvas_t
-{
-	int x, y, w, h;
-	
-	canvas_t()
-	{
-		x = y = 0;
-		w = 960;
-		h = 720;
-	}
-	
-	void draw(HDC hdc)
-	{
-		temp_color_setter_t cs(hdc);
-		cs.bg(RGB(255,255,255));
-		cs.fg(RGB(0,0,0));
-		
-		//~ RoundRect(hdc, gap, gap, 960, 720, 16, 16);
-		Rectangle(hdc, x, y, w, h);
-	}
-};
-
-
-struct context_t
-{
-	canvas_t canvas;
-	
-	context_t()
-	{
-		canvas.x = canvas.y = 16;
-	}
-};
-
 
 context_t default_context;
+
+
+struct mdc2_t : public mdc_t
+{
+	mdc2_t(HDC hdc)
+	:	mdc_t(hdc)
+	{}
+	
+	void clear(UINT id)
+	{
+		window_rect_t r(handle, true);
+		FillRect(handle, &r.rect, (HBRUSH)(id+1));
+	}
+	
+	void clear(color_t c)
+	{
+		temp_color_setter_t cs(handle);
+		cs.bg(c.c);
+		
+		window_rect_t r(handle, true);
+		//~ FillRect(handle, &r.rect, (HBRUSH)(id+1));
+		Rectangle(handle, r.l, r.t, r.r, r.b);
+	}
+};
 
 
 void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
@@ -60,16 +55,19 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	
 	BeginPaint(h, &ps);
 	
-	mdc_t mdc(hdc);
+	mdc2_t mdc(hdc);
 	
-	/// -- draw background.
-	window_rect_t r(hdc, true);
-	FillRect(mdc.handle, &r.rect, (HBRUSH)(COLOR_BTNFACE+1));
+	//~ mdc.clear(COLOR_BTNFACE);
+	mdc.clear(color_t(70, true, true));
 	
 	//~ temp_object_t brush(CreateSolidBrush(RGB(200,100,100)));
 	//~ FillRect(mdc.handle, &r.rect, (HBRUSH)brush.handle);
 	
 	default_context.canvas.draw(mdc.handle);
+	
+	line_t line(100,100,600,100);
+	line.draw(mdc.handle);
+	
 	mdc.flip();
 	
 	EndPaint(h, &ps);

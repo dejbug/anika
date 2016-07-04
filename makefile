@@ -11,12 +11,20 @@ LIB_DIRS:=\
 	
 INCS:=$(addprefix -I,$(INC_DIRS))
 LIBS:=$(addprefix -L,$(LIB_DIRS))
-	
+
+.PHONY: all clean run
+
 all: anika.exe
 
 anika.exe: anika.o
 	@g++ -o $@ $< $(LDFLAGS)
 
-anika.o: anika.cpp
+anika.o: anika.cpp *.h
 	@g++ -o $@ -c $< $(CXXFLAGS)
-	
+
+run: anika.exe
+	@anika.exe
+
+clean:
+	@del *.o 2>NUL
+	@del *.exe 2>NUL

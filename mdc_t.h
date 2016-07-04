@@ -38,7 +38,7 @@ struct mdc_t
 	void delete_dc()
 	{
 		if(!handle) return;
-		DeleteObject(handle);
+		DeleteDC(handle);
 		handle = NULL;
 	}
 	
