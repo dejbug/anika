@@ -1,6 +1,7 @@
-#define WIN32_LEAN_AND_MEAN
+#pragma once
 #include <windows.h>
 
+#include "errors.h"
 #include "temp_object_t.h"
 
 

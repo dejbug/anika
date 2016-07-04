@@ -1,15 +1,13 @@
-#define WIN32_LEAN_AND_MEAN
+#pragma once
 #include <windows.h>
 
+#include "errors.h"
+#include "error_t.h"
 #include "window_rect_t.h"
 
 
 struct window_positioner_t
 {
-	struct err { enum {
-		handle,
-	}; };
-	
 	HWND handle;
 	UINT extra_flags;
 	
@@ -17,14 +15,7 @@ struct window_positioner_t
 		: handle(handle), extra_flags(SWP_NOACTIVATE)
 	{
 		if(!handle)
-			throw error_t(err::handle);
-	}
-	
-	window_positioner_t(window_t& wnd)
-		: handle(wnd.handle), extra_flags(SWP_NOACTIVATE)
-	{
-		if(!handle)
-			throw error_t(err::handle);
+			throw error_t(err::WINDOW_POSITIONER_HANDLE);
 	}
 	
 	void move(int dx, int dy) const

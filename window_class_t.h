@@ -1,17 +1,12 @@
 #pragma once
 #include <windows.h>
 
-#include "error.h"
+#include "errors.h"
+#include "error_t.h"
 
 
 struct window_class_t : public WNDCLASSEX
 {
-	struct err { enum {
-		install,
-		uninstall,
-		load,
-	}; };
-	
 	window_class_t(LPCSTR name, WNDPROC callback=DefWindowProc)
 	{
 		init();
@@ -47,18 +42,18 @@ struct window_class_t : public WNDCLASSEX
 	void install()
 	{
 		if(!RegisterClassEx(this))
-			throw error_t(err::install);
+			throw error_t(err::WINDOW_CLASS_INSTALL);
 	}
 	
 	void uninstall()
 	{
 		if(!UnregisterClass(lpszClassName, hInstance))
-			throw error_t(err::uninstall);
+			throw error_t(err::WINDOW_CLASS_UNINSTALL);
 	}
 	
 	void load()
 	{
 		if(!GetClassInfoEx(hInstance, lpszClassName, this))
-			throw error_t(err::load);
+			throw error_t(err::WINDOW_CLASS_LOAD);
 	}
 };

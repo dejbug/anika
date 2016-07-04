@@ -3,13 +3,15 @@
 #include <stdio.h>
 #include <string>
 
+#include "errors.h"
 #include "error_t.h"
 #include "window_class_t.h"
-#include "window_t.h"
+#include "window_maker_t.h"
 #include "window_positioner_t.h"
 #include "window_rect_t.h"
 #include "temp_color_setter_t.h"
 #include "temp_object_t.h"
+#include "mdc_t.h"
 
 #include "win.h"
 
@@ -49,73 +51,6 @@ struct context_t
 
 
 context_t default_context;
-
-
-struct mdc_t
-{
-	struct err { enum {
-		bmp,
-	}; };
-	
-	HDC parent;
-	HDC handle;
-	HBITMAP bmp;
-	int w, h;
-	
-	mdc_t(HDC parent)
-	:	parent(parent), handle(NULL), bmp(NULL)
-	{
-		if(!parent) return;
-		
-		handle = CreateCompatibleDC(parent);
-		if(!handle) throw error_t(err::bmp);
-		
-		resize();
-	}
-	
-	virtual ~mdc_t()
-	{
-		delete_bmp();
-		delete_dc();
-	}
-	
-	void delete_bmp()
-	{
-		if(handle) SelectObject(handle, (HBITMAP)NULL);
-		if(bmp) { DeleteObject(bmp); bmp = NULL; }
-	}
-	
-	void delete_dc()
-	{
-		if(!handle) return;
-		DeleteObject(handle);
-		handle = NULL;
-	}
-	
-	void resize(int w, int h)
-	{
-		if(!handle) return;
-		if(bmp) delete_bmp();
-		
-		bmp = CreateCompatibleBitmap(parent, w, h);
-		this->w = w;
-		this->h = h;
-		
-		if(!bmp) return;
-		SelectObject(handle, (HBITMAP)bmp);
-	}
-	
-	void resize()
-	{
-		window_rect_t r(handle, true);
-		resize(r.w, r.h);
-	}
-	
-	void flip()
-	{
-		BitBlt(parent, 0, 0, w, h, handle, 0, 0, SRCCOPY);
-	}
-};
 
 
 void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
@@ -185,15 +120,15 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	window_class_t wc("MAINFRAME", MainFrameProc);
 	wc.install();
 	
-	window_t wnd(wc);
-	wnd.create();
+	window_maker_t wm(wc);
+	wm.create();
 	
-	window_positioner_t wp(wnd);
+	window_positioner_t wp(wm.handle);
 	wp.setsize(1000, 800);
 	wp.center_to_screen();
 	
-	UpdateWindow(wnd.handle);
-	wnd.show();
+	UpdateWindow(wm.handle);
+	ShowWindow(wm.handle, SW_SHOW);
 	
 	return win::run();
 }

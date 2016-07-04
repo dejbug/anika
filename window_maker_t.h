@@ -1,18 +1,17 @@
-#define WIN32_LEAN_AND_MEAN
+#pragma once
 #include <windows.h>
 
+#include "errors.h"
+#include "error_t.h"
 
-struct window_t
+
+struct window_maker_t
 {
-	struct err { enum {
-		create,
-	}; };
-	
 	HWND handle;
 	HINSTANCE hinstance;
 	std::string clsname;
 	
-	window_t(window_class_t& wc) : handle(NULL)
+	window_maker_t(window_class_t& wc) : handle(NULL)
 	{
 		hinstance = wc.hInstance;
 		clsname = wc.lpszClassName;
@@ -35,7 +34,7 @@ struct window_t
 		);
 		
 		if(!handle)
-			throw error_t(err::create);
+			throw error_t(err::WINDOW_MAKER_CREATE);
 		
 		return handle;
 	}
@@ -56,13 +55,8 @@ struct window_t
 		);
 		
 		if(!handle)
-			throw error_t(err::create);
+			throw error_t(err::WINDOW_MAKER_CREATE);
 		
 		return handle;
-	}
-	
-	void show(int show=SW_SHOW)
-	{
-		ShowWindow(handle, show);
 	}
 };
