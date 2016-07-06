@@ -30,3 +30,14 @@ struct dot_t
 		Ellipse(hdc, x-r, y-r, x+r, y+r);
 	}
 };
+
+
+
+void draw_dots(HDC hdc, dot_t::vector& dots)
+{
+	for(dot_t::vector::reverse_iterator it=dots.rbegin();
+		it<dots.rend(); ++it)
+	{
+		it->draw(hdc);
+	}
+}

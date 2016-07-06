@@ -20,8 +20,7 @@
 #include "win.h"
 
 
-
-context_t default_context;
+context_t defcon;
 
 
 struct mdc2_t : public mdc_t
@@ -57,16 +56,27 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	
 	mdc2_t mdc(hdc);
 	
-	//~ mdc.clear(COLOR_BTNFACE);
-	mdc.clear(color_t(70, true, true));
+	mdc.clear(COLOR_BTNFACE);
+	//~ mdc.clear(color_t(70, true, true));
 	
 	//~ temp_object_t brush(CreateSolidBrush(RGB(200,100,100)));
 	//~ FillRect(mdc.handle, &r.rect, (HBRUSH)brush.handle);
 	
-	default_context.canvas.draw(mdc.handle);
+	defcon.canvas.draw_area(mdc.handle);
+	
+	temp_color_setter_t cs(mdc.handle);
+	
+	cs.fg(255,200,200);
+	cs.bg(false);
+	
+	defcon.tracker.grid.draw(mdc.handle);
+	
+	cs.reset();
 	
 	line_t line(100,100,600,100);
 	line.draw(mdc.handle);
+	
+	defcon.canvas.draw_border(mdc.handle);
 	
 	mdc.flip();
 	
@@ -76,6 +86,8 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 
 LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
+	defcon.tracker.callback(h,m,w,l);
+	
 	switch(m)
 	{
 		case WM_CREATE:
@@ -112,7 +124,6 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 }
 
 
-
 int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	window_class_t wc("MAINFRAME", MainFrameProc);
@@ -122,7 +133,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	wm.create();
 	
 	window_positioner_t wp(wm.handle);
-	wp.setsize(1000, 800);
+	wp.setsize(1040, 800);
 	wp.center_to_screen();
 	
 	UpdateWindow(wm.handle);

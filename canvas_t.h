@@ -19,17 +19,25 @@ struct canvas_t
 	
 	void draw(HDC hdc)
 	{
+		draw_area(hdc);
+		draw_border(hdc);
+	}
+	
+	void draw_area(HDC hdc)
+	{
 		temp_color_setter_t cs(hdc);
+		cs.fg(false);
 		cs.bg(RGB(255,255,255));
+		
+		RoundRect(hdc, x, y, x+w+1, y+h+1, 16, 16);
+	}
+	
+	void draw_border(HDC hdc)
+	{
+		temp_color_setter_t cs(hdc);
 		cs.fg(RGB(0,0,0));
+		cs.bg(false);
 		
-		RoundRect(hdc, x, y, w, h, 16, 16);
-		//~ Rectangle(hdc, x, y, w, h);
-		
-		for(dot_t::vector::reverse_iterator it=dots.rbegin();
-			it<dots.rend(); ++it)
-		{
-			it->draw(hdc);
-		}
+		RoundRect(hdc, x, y, x+w+1, y+h+1, 16, 16);
 	}
 };

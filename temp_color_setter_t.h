@@ -52,7 +52,7 @@ struct temp_color_setter_t
 			SelectObject(hdc, (HBRUSH)GetStockObject(DC_BRUSH));
 		
 		else
-			SelectObject(hdc, (HPEN)NULL_PEN);
+			SelectObject(hdc, (HBRUSH)GetStockObject(NULL_BRUSH));
 	}
 	
 	void fg(int c)
@@ -60,24 +60,14 @@ struct temp_color_setter_t
 		SetDCPenColor(hdc, RGB(c,c,c));
 	}
 	
-	void fg(char r, char g, char b)
-	{
-		SetDCPenColor(hdc, RGB(r,g,b));
-	}
-	
-	void fg(COLORREF c)
-	{
-		SetDCPenColor(hdc, c);
-	}
-	
-	void fg(color_t c)
-	{
-		SetDCPenColor(hdc, c.c);
-	}
-	
 	void bg(int c)
 	{
 		SetDCBrushColor(hdc, RGB(c,c,c));
+	}
+	
+	void fg(char r, char g, char b)
+	{
+		SetDCPenColor(hdc, RGB(r,g,b));
 	}
 	
 	void bg(char r, char g, char b)
@@ -85,9 +75,19 @@ struct temp_color_setter_t
 		SetDCBrushColor(hdc, RGB(r,g,b));
 	}
 	
+	void fg(COLORREF c)
+	{
+		SetDCPenColor(hdc, c);
+	}
+	
 	void bg(COLORREF c)
 	{
 		SetDCBrushColor(hdc, c);
+	}
+	
+	void fg(color_t c)
+	{
+		SetDCPenColor(hdc, c.c);
 	}
 	
 	void bg(color_t c)
