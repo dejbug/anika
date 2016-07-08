@@ -24,8 +24,8 @@ struct dot_t
 		//~ FillRect(hdc, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
 		
 		temp_color_setter_t cs(hdc);
-		cs.fg(30);
-		cs.bg(200);
+		cs.fg(30,30,30);
+		cs.bg(200,200,200);
 		
 		Ellipse(hdc, x-r, y-r, x+r, y+r);
 	}

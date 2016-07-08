@@ -15,9 +15,9 @@ void test_1(HDC hdc)
 	//~ LineTo(hdc, b.x,b.y);
 	
 	temp_color_setter_t cs(hdc);
+	cs.fb(true, false);
 	
 	cs.fg(0,100,200);
-	cs.bg(false);
 	//~ Rectangle(hdc, a.x, a.y, b.x, b.y);
 	MoveToEx(hdc, c.x, c.y, NULL);
 	LineTo(hdc, a.x, a.y);
@@ -40,20 +40,15 @@ void test_1(HDC hdc)
 void test_2(HDC hdc)
 {
 	temp_color_setter_t cs(hdc);
+	cs.fb(true, false);
 	
-	cs.fg(200,0,0);
-	cs.bg(false);
-	
-	//~ mouse_grid_t grid(60+2,45+2, 8,8);
-	//~ grid.draw(hdc);
-	
+	//~ cs.fg(200,0,0);
 	cs.fg(100,100,200);
-	cs.bg(false);
 	
 	dot_t::vector dots;
-	dots.push_back(dot_t(300,300));
-	dots.push_back(dot_t(400,400));
+	dots.push_back(dot_t(100,100));
+	dots.push_back(dot_t(200,200));
 	
-	//~ draw_dots(hdc, dots);
+	draw_dots(hdc, dots);
 }
 

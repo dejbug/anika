@@ -23,20 +23,20 @@ struct canvas_t
 		draw_border(hdc);
 	}
 	
-	void draw_area(HDC hdc)
+	void draw_area(HDC hdc, COLORREF c=RGB(255,255,255))
 	{
 		temp_color_setter_t cs(hdc);
-		cs.fg(false);
-		cs.bg(RGB(255,255,255));
+		cs.fb(false, true);
+		cs.bg(c);
 		
 		RoundRect(hdc, x, y, x+w+1, y+h+1, 16, 16);
 	}
 	
-	void draw_border(HDC hdc)
+	void draw_border(HDC hdc, COLORREF c=RGB(0,0,0))
 	{
 		temp_color_setter_t cs(hdc);
-		cs.fg(RGB(0,0,0));
-		cs.bg(false);
+		cs.fb(true, false);
+		cs.fg(c);
 		
 		RoundRect(hdc, x, y, x+w+1, y+h+1, 16, 16);
 	}

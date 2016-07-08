@@ -1,6 +1,49 @@
 #pragma once
 #include <windows.h>
 #include <math.h>
+#include <stdio.h>
+
+
+COLORREF hsv(float h, float s, float v);
+
+
+struct color_t
+{
+	COLORREF c;
+	
+	color_t(COLORREF c)
+	:	c(c)
+	{
+	}
+	
+	color_t(char r, char g, char b)
+	:	c(RGB(r,g,b))
+	{
+	}
+	
+	color_t(int h, bool soft, bool bright)
+	:	c(hsv(float(h),
+			soft ? 0.33f : 0.66f,
+			bright ? 0.88f : 0.55f))
+	{
+	}
+	
+	color_t(int h, float s, float v)
+	:	c(hsv(float(h),s,v))
+	{
+	}
+	
+	color_t(int h, double s, double v)
+	:	c(hsv(float(h),s,v))
+	{
+	}
+	
+	void print()
+	{
+		printf("cref %08lx (%ld,%ld,%ld)\n",
+			c, c&0xff, (c>>8)&0xff, (c>>16)&0xff);
+	}
+};
 
 
 COLORREF hsv(float h, float s, float v)
@@ -55,41 +98,3 @@ COLORREF hsv(float h, float s, float v)
 	
 	return RGB(r*255, g*255, b*255);
 }
-
-
-struct color_t
-{
-	COLORREF c;
-	
-	color_t(char r, char g, char b)
-	:	c(RGB(r,g,b))
-	{
-	}
-	
-	color_t(unsigned long c)
-	:	c(c)
-	{
-	}
-	
-	color_t(int h)
-	:	c(hsv(float(h),0.33f,0.55f))
-	{
-	}
-	
-	color_t(int h, bool soft, bool bright)
-	:	c(hsv(float(h),
-			soft ? 0.33f : 0.66f,
-			bright ? 0.88f : 0.55f))
-	{
-	}
-	
-	color_t(int h, float s, float v)
-	:	c(hsv(float(h),s,v))
-	{
-	}
-	
-	color_t(int h, double s, double v)
-	:	c(hsv(float(h),s,v))
-	{
-	}
-};

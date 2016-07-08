@@ -6,6 +6,9 @@
 #include "temp_color_setter_t.h"
 #include "window_rect_t.h"
 
+#include "tests.h"
+#include "palettes.h"
+
 
 extern context_t defcon;;
 
@@ -18,19 +21,16 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	mdc2_t mdc(ps.hdc);
 	mdc.clear(COLOR_BTNFACE);
 	
-	defcon.canvas.draw_area(mdc.handle);
+	defcon.canvas.draw_area(mdc.handle, colors::white);
 	
 	temp_color_setter_t cs(mdc.handle);
+	cs.fb(true, false);
 	
-	//~ cs.fg(255,200,200);
-	cs.fg(color_t(30*11,.20f,.9f).c);
-	cs.bg(false);
-	
+	cs.fg(colors::mistyrose);
 	defcon.tracker.grid.draw(mdc.handle);
 	
-	cs.reset();
 	
-	defcon.canvas.draw_border(mdc.handle);
+	defcon.canvas.draw_border(mdc.handle, colors::black);
 	
 	mdc.flip();
 	EndPaint(h, &ps);
