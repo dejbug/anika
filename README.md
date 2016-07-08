@@ -1,8 +1,8 @@
 
 # anika
 
-an easy-going foto-novela composer not only for depressives
+An easy-going fotonovela composer not only for depressives.
 
-(also: an anime-to-manga snipping, compositing, and re-dialoguing tool)
+(also: An anime-to-manga snipping, compositing, and re-dialoguing tool.)
 
-let's see where this is going...
+Let's see where this is going...

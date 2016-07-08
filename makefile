@@ -1,5 +1,5 @@
 
-LDFLAGS:=-Wl,--subsystem=windows
+LDFLAGS_RELEASE:=-Wl,--subsystem=windows
 LDFLAGS:=-lgdi32
 CXXFLAGS:=-Wall -Wno-unused-variable
 
@@ -12,7 +12,7 @@ LIB_DIRS:=\
 INCS:=$(addprefix -I,$(INC_DIRS))
 LIBS:=$(addprefix -L,$(LIB_DIRS))
 
-.PHONY: all clean run
+.PHONY: all clean run release
 
 all: anika.exe
 
@@ -28,3 +28,6 @@ run: anika.exe
 clean:
 	@del *.o 2>NUL
 	@del *.exe 2>NUL
+
+release: anika.o
+	@g++ -o anika.exe $< $(LDFLAGS) $(LDFLAGS_RELEASE)

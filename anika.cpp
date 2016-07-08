@@ -73,6 +73,8 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	window_maker_t wm(wc);
 	wm.create();
 	
+	SetWindowText(wm.handle, "anika");
+	
 	window_positioner_t wp(wm.handle);
 	wp.setsize(1040, 800);
 	wp.center_to_screen();
