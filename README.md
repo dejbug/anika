@@ -1,4 +1,7 @@
+# anika
 
-# ani-ka
+an easy-going foto-novela composer not only for depressives
 
-an anime-to-manga snipping, compositing, and dialogueing tool.
+(also: an anime-to-manga snipping, compositing, and re-dialogueing tool)
+
+let's see where this is going...

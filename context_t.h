@@ -1,13 +1,13 @@
 #pragma once
 #include <windows.h>
 
-#include "canvas_t.h"
+#include "canvas2_t.h"
 #include "mouse_tracker_t.h"
 
 
 struct context_t
 {
-	canvas_t canvas;
+	canvas2_t canvas;
 	mouse_tracker_t tracker;
 	
 	context_t()

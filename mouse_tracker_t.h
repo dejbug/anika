@@ -21,7 +21,14 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				//~ printf("%d:%d\n", x, y);
+			}	break;
+			
+			case WM_LBUTTONDOWN:
+			{
+				const int x = LOWORD(l);
+				const int y = HIWORD(l);
+				
+				printf("%d:%d\n", x, y);
 				
 			}	break;
 		}
