@@ -6,7 +6,7 @@
 
 struct mouse_grid_picker_t
 {
-	mouse_grid_picker_t& grid;
+	mouse_grid_t& grid;
 	
 	mouse_grid_picker_t(mouse_grid_t& grid)
 	:	grid(grid)
