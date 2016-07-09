@@ -51,8 +51,8 @@ struct context_t :
 		int inc = delta > 0 ? +1 : -1;
 		
 		if((inc < 0 && layout.cols > 1 && layout.rows > 1)
-			|| (inc > 0 && layout.cols <= max_cols
-			&& layout.rows <= max_rows))
+			|| (inc > 0 && layout.cols < max_cols
+			&& layout.rows < max_rows))
 		{
 			layout.cols += inc;
 			layout.rows += inc;

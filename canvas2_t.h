@@ -51,6 +51,9 @@ struct canvas2_t : public canvas_t
 	{
 		boxes.clear();
 		
+		if(cols <= 0 || rows <= 0)
+			throw error_t(err::ARGS);
+		
 		const int cw = w / cols;
 		const int ch = h / rows;
 		
