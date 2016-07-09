@@ -15,6 +15,7 @@ struct context_t
 		const int offset = 8;
 		
 		canvas.x = canvas.y = 16 + offset;
+		canvas.reset();
 		
 		tracker.grid.set_offsets(offset, offset);
 		tracker.grid.set_layout(60+2, 45+2);

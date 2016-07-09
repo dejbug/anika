@@ -17,7 +17,10 @@ struct line_t
 	{
 		MoveToEx(hdc, ax, ay, NULL);
 		LineTo(hdc, bx, by);
-		
+	}
+	
+	void draw_dots(HDC hdc)
+	{
 		dot_t a(ax,ay), b(bx,by);
 		a.draw(hdc);
 		b.draw(hdc);
