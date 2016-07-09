@@ -21,13 +21,15 @@
 #include "win.h"
 // functions
 #include "on_paint.h"
+
+
 // globals
 context_t defcon;
 
 
 LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
-	defcon.tracker.callback(h,m,w,l);
+	defcon.tracker.callback(h, m, w, l);
 	
 	switch(m)
 	{
@@ -72,6 +74,8 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	window_maker_t wm(wc);
 	wm.create();
+	
+	defcon.frame = wm.handle;
 	
 	SetWindowText(wm.handle, "anika");
 	
