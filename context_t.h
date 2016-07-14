@@ -2,8 +2,8 @@
 #include <windows.h>
 #include <vector>
 
-#include "canvas2_t.h"
 #include "mouse_tracker_t.h"
+#include "canvas2_t.h"
 
 
 struct context_t :
@@ -27,7 +27,7 @@ struct context_t :
 		layout.rows = 2;
 		layout.gap = 4;
 		
-		canvas.x = canvas.y = 16 + offset;
+		canvas.r.offset(16 + offset, 16 + offset);
 		update_canvas();
 		
 		tracker.grid.set_offsets(offset, offset);
@@ -41,7 +41,8 @@ struct context_t :
 	
 	void update_canvas()
 	{
-		canvas.layout(layout.cols, layout.rows, layout.gap);
+		canvas.layout.setup(
+			layout.cols, layout.rows, layout.gap);
 	}
 	
 	virtual void on_mouse_wheel(int x, int y, int delta, int keys)
@@ -63,18 +64,4 @@ struct context_t :
 			UpdateWindow(frame);
 		}
 	}
-	
-private:
-	void add_corner_dots()
-	{
-		canvas.dots.push_back(
-			dot_t(canvas.x,canvas.y));
-		canvas.dots.push_back(
-			dot_t(canvas.x+canvas.w,canvas.y));
-		canvas.dots.push_back(
-			dot_t(canvas.x,canvas.y+canvas.h));
-		canvas.dots.push_back(
-			dot_t(canvas.x+canvas.w,canvas.y+canvas.h));
-	}
 };
-

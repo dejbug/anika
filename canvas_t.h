@@ -2,19 +2,16 @@
 #include <windows.h>
 
 #include "temp_color_setter_t.h"
-#include "dot_t.h"
+#include "rect_t.h"
 
 
 struct canvas_t
 {
-	int x, y, w, h;
-	dot_t::vector dots;
+	rect_t r;
 	
 	canvas_t()
+	:	r(0,0,960,720)
 	{
-		x = y = 0;
-		w = 960;
-		h = 720;
 	}
 	
 	void draw(HDC hdc)
@@ -29,7 +26,7 @@ struct canvas_t
 		cs.fb(false, true);
 		cs.bg(c);
 		
-		RoundRect(hdc, x, y, x+w+1, y+h+1, 16, 16);
+		draw_rect(hdc, r, 16);
 	}
 	
 	void draw_border(HDC hdc, COLORREF c=RGB(0,0,0))
@@ -38,6 +35,6 @@ struct canvas_t
 		cs.fb(true, false);
 		cs.fg(c);
 		
-		RoundRect(hdc, x, y, x+w+1, y+h+1, 16, 16);
+		draw_rect(hdc, r, 16);
 	}
 };

@@ -10,7 +10,7 @@
 #include "palettes.h"
 
 
-extern context_t defcon;;
+extern context_t defcon;
 
 
 void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)

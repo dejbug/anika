@@ -46,6 +46,7 @@ struct color_t
 };
 
 
+// [ source:] <https://www.cs.rit.edu/~ncs/color/t_convert.html>
 COLORREF hsv(float h, float s, float v)
 {
 	int i;

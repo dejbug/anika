@@ -48,6 +48,20 @@ struct rect_t
 		
 		return *this;
 	}
+	
+	void offset(long dx, long dy)
+	{
+		l += dx;
+		r += dx;
+		t += dy;
+		b += dy;
+	}
+	
+	void inflate(long dw, long dh)
+	{
+		t = l + w + dw;
+		b = t + h + dh;
+	}
 };
 
 
