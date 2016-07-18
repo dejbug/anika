@@ -11,7 +11,8 @@ struct window_maker_t
 	HINSTANCE hinstance;
 	std::string clsname;
 	
-	window_maker_t(window_class_t& wc) : handle(NULL)
+	window_maker_t(window_class_t& wc) :
+		handle(NULL)
 	{
 		hinstance = wc.hInstance;
 		clsname = wc.lpszClassName;

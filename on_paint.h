@@ -27,7 +27,7 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	cs.fb(true, false);
 	
 	cs.fg(colors::mistyrose);
-	defcon.tracker.grid.draw(mdc.handle);
+	defcon.grid.draw(mdc.handle);
 	
 	
 	defcon.canvas.draw_border(mdc.handle, colors::black);

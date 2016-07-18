@@ -13,8 +13,8 @@ struct rect_t
 	
 	typedef std::vector<rect_t> vector;
 	
-	rect_t(long x=0, long y=0, long w=0, long h=0)
-	:	width(w), height(h),
+	rect_t(long x=0, long y=0, long w=0, long h=0) :
+		width(w), height(h),
 		left(rect.left), top(rect.top),
 		right(rect.right), bottom(rect.bottom),
 		l(left), t(top), r(right), b(bottom),

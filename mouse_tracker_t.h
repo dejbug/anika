@@ -3,8 +3,6 @@
 #include <zmouse.h>
 #include <vector>
 
-#include "mouse_grid_t.h"
-
 
 struct mouse_tracker_move_i
 {
@@ -35,8 +33,6 @@ struct mouse_tracker_clicks_i
 
 struct mouse_tracker_t
 {
-	mouse_grid_t grid;
-	
 	mouse_tracker_move_i::pvector move_listeners;
 	mouse_tracker_wheel_i::pvector wheel_listeners;
 	mouse_tracker_clicks_i::pvector clicks_listeners;

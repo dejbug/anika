@@ -8,12 +8,16 @@
 
 struct box_layout_t
 {
-	int roundness;
-	rect_t& r;
 	rect_t::vector boxes;
+	int cols, rows;
+	int cell_width, cell_height, gap;
+	int roundness;
 	
-	box_layout_t(rect_t& r)
-	:	roundness(0), r(r)
+	static bool allow_rounding_errors;
+	
+	box_layout_t() :
+		cols(1), rows(1),
+		roundness(0)
 	{
 	}
 	
@@ -24,12 +28,16 @@ struct box_layout_t
 			draw_rect(hdc, *it, roundness);
 	}
 	
-	void setup(int cols, int rows, int gap=0)
+	void setup(const rect_t& r, int cols, int rows, int gap=0)
 	{
 		boxes.clear();
 		
 		if(cols <= 0 || rows <= 0)
 			throw error_t(err::ARGS);
+		
+		if(!allow_rounding_errors)
+			if(r.w % cols != 0 || r.h % rows != 0)
+				throw error_t(err::ARGS);
 		
 		const int cw = r.w / cols;
 		const int ch = r.h / rows;
@@ -45,6 +53,12 @@ struct box_layout_t
 				boxes.push_back(
 					rect_t(cx+gap, cy+gap, cw-gap, ch-gap));
 			}
+		
+		this->cols = cols;
+		this->rows = rows;
+		this->cell_width = cw;
+		this->cell_height = ch;
+		this->gap = gap;
 	}
 	
 	void reset()
@@ -52,3 +66,6 @@ struct box_layout_t
 		boxes.clear();
 	}
 };
+
+
+bool box_layout_t::allow_rounding_errors = true;

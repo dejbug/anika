@@ -8,8 +8,8 @@ struct line_t
 {
 	int ax, ay, bx, by;
 	
-	line_t(int ax, int ay, int bx, int by)
-	:	ax(ax), ay(ay), bx(bx), by(by)
+	line_t(int ax, int ay, int bx, int by) :
+		ax(ax), ay(ay), bx(bx), by(by)
 	{
 	}
 	

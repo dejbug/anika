@@ -36,5 +36,11 @@ namespace win {
 	{
 		SendMessage(h, WM_CLOSE, 0, 0);
 	}
+	
+	void repaint_window(HWND h)
+	{
+		InvalidateRect(h, NULL, TRUE);
+		UpdateWindow(h);
+	}
 
 }; //namespace win

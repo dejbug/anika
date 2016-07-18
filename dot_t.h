@@ -13,8 +13,8 @@ struct dot_t
 	int x, y;
 	int r;
 	
-	dot_t(int x, int y)
-	:	x(x), y(y), r(6)
+	dot_t(int x, int y) :
+		x(x), y(y), r(6)
 	{
 	}
 	

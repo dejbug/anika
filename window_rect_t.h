@@ -8,14 +8,14 @@ struct window_rect_t : public rect_t
 {
 	HWND parent;
 	
-	window_rect_t(HWND parent, bool client=false)
-	:	parent(parent)
+	window_rect_t(HWND parent, bool client=false) :
+		parent(parent)
 	{
 		update(client);
 	}
 	
-	window_rect_t(HDC hdc, bool client=false)
-	:	parent(WindowFromDC(hdc))
+	window_rect_t(HDC hdc, bool client=false) :
+		parent(WindowFromDC(hdc))
 	{
 		update(client);
 	}

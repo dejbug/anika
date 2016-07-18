@@ -7,10 +7,10 @@
 
 struct canvas_t
 {
-	rect_t r;
+	rect_t bounds;
 	
-	canvas_t()
-	:	r(0,0,960,720)
+	canvas_t() :
+		bounds(0,0,960,720)
 	{
 	}
 	
@@ -26,7 +26,7 @@ struct canvas_t
 		cs.fb(false, true);
 		cs.bg(c);
 		
-		draw_rect(hdc, r, 16);
+		draw_rect(hdc, bounds, 16);
 	}
 	
 	void draw_border(HDC hdc, COLORREF c=RGB(0,0,0))
@@ -35,6 +35,6 @@ struct canvas_t
 		cs.fb(true, false);
 		cs.fg(c);
 		
-		draw_rect(hdc, r, 16);
+		draw_rect(hdc, bounds, 16);
 	}
 };

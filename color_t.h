@@ -11,8 +11,8 @@ struct color_t
 {
 	COLORREF c;
 	
-	color_t(COLORREF c)
-	:	c(c)
+	color_t(COLORREF c) :
+		c(c)
 	{
 	}
 	

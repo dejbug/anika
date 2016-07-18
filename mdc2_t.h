@@ -8,8 +8,8 @@
 
 struct mdc2_t : public mdc_t
 {
-	mdc2_t(HDC hdc)
-	:	mdc_t(hdc)
+	mdc2_t(HDC hdc) :
+		mdc_t(hdc)
 	{}
 	
 	void clear(UINT id)

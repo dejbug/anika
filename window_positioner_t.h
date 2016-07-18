@@ -11,8 +11,8 @@ struct window_positioner_t
 	HWND handle;
 	UINT extra_flags;
 	
-	window_positioner_t(HWND handle)
-		: handle(handle), extra_flags(SWP_NOACTIVATE)
+	window_positioner_t(HWND handle) :
+		handle(handle), extra_flags(SWP_NOACTIVATE)
 	{
 		if(!handle)
 			throw error_t(err::WINDOW_POSITIONER_HANDLE);

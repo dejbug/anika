@@ -8,8 +8,8 @@ struct mouse_grid_t
 	int gx, gy;		/// grid offsets
 	int cw, ch;		/// cell size
 	
-	mouse_grid_t()
-	:	cols(0), rows(0),
+	mouse_grid_t() :
+		cols(0), rows(0),
 		gx(0), gy(0),
 		cw(0), ch(0)
 	{
@@ -45,7 +45,7 @@ struct mouse_grid_t
 	}
 	
 	void recalc()
-	{	
+	{
 	}
 	
 	void draw(HDC hdc)

@@ -4,16 +4,16 @@
 #include "canvas_t.h"
 #include "temp_color_setter_t.h"
 #include "box_layout_t.h"
+#include "mouse_grid_t.h"
 
 
 struct canvas2_t : public canvas_t
 {
 	box_layout_t layout;
 	
-	canvas2_t()
-	:	layout(r)
+	canvas2_t(int roundness=2)
 	{
-		layout.roundness = 2;
+		layout.roundness = roundness;
 	}
 	
 	void draw_area(HDC hdc, COLORREF c=RGB(255,255,255))

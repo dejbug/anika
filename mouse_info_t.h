@@ -4,16 +4,23 @@
 
 struct mouse_info_t
 {
-	bool has_mouse;
-	bool has_wheel;
-	bool buttons_swapped;
-	int buttons_count;
-	
-	mouse_info_t()
+	static bool has_mouse()
 	{
-		has_mouse = GetSysteMetrics(SM_MOUSEPRESENT);
-		has_wheel = GetSysteMetrics(SM_MOUSEWHEELPRESENT);
-		buttons_swapped = GetSysteMetrics(SM_SWAPBUTTON);
-		buttons_count = GetSysteMetrics(SM_CMOUSEBUTTONS);
+		return GetSystemMetrics(SM_MOUSEPRESENT);
+	}
+	
+	static bool has_wheel()
+	{
+		return GetSystemMetrics(SM_MOUSEWHEELPRESENT);
+	}
+	
+	static bool buttons_swapped()
+	{
+		return GetSystemMetrics(SM_SWAPBUTTON);
+	}
+	
+	static int get_buttons_count()
+	{
+		return GetSystemMetrics(SM_CMOUSEBUTTONS);
 	}
 };

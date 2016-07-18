@@ -12,8 +12,8 @@ struct mdc_t
 	HBITMAP bmp;
 	int w, h;
 	
-	mdc_t(HDC parent)
-	:	parent(parent), handle(NULL), bmp(NULL)
+	mdc_t(HDC parent) :
+		parent(parent), handle(NULL), bmp(NULL)
 	{
 		if(!parent) return;
 		
