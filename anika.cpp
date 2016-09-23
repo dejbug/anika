@@ -4,19 +4,10 @@
 #include <string>
 
 // classes
-#include "errors.h"
-#include "error_t.h"
 #include "window_class_t.h"
 #include "window_maker_t.h"
 #include "window_positioner_t.h"
-#include "window_rect_t.h"
-#include "temp_color_setter_t.h"
-#include "temp_object_t.h"
-#include "canvas_t.h"
 #include "context_t.h"
-#include "line_t.h"
-#include "color_t.h"
-#include "mdc2_t.h"
 // namespaces
 #include "win.h"
 // functions

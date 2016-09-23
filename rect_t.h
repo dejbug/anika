@@ -45,6 +45,8 @@ struct rect_t
 		top = o.t;
 		right = o.r;
 		bottom = o.b;
+		width = o.width;
+		height = o.height;
 		
 		return *this;
 	}
@@ -59,8 +61,12 @@ struct rect_t
 	
 	void inflate(long dw, long dh)
 	{
-		t = l + w + dw;
-		b = t + h + dh;
+		l -= dw;
+		r += dw;
+		t -= dh;
+		b += dh;
+		w = r-l;
+		h = b-t;
 	}
 };
 

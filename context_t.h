@@ -16,18 +16,22 @@ struct context_t : public mouse_tracker_wheel_i
 	mouse_tracker_t tracker;
 	
 	const int max_cols, max_rows;
-	const int resolution;
-	const int offset, extra;
+	
+	const int client_offset_to_grid;
+	const int grid_cell_offset_to_canvas;
+	const int grid_cell_size;
 	
 	context_t() :
 		frame(NULL),
 		canvas(12),
-		max_cols(12), max_rows(12),
-		resolution(16),
-		offset(8),
-		extra(1)	/// extra cols/rows as framing
+		max_cols(12),
+		max_rows(12),
+		client_offset_to_grid(8),
+		grid_cell_offset_to_canvas(1),
+		grid_cell_size(16)
 	{
-		const int full_offset = offset + extra * resolution;
+		const int full_offset = client_offset_to_grid +
+			grid_cell_offset_to_canvas * grid_cell_size;
 		
 		canvas.bounds.offset(full_offset, full_offset);
 		canvas.layout.setup(canvas.bounds, 1, 1, 6);
@@ -58,12 +62,18 @@ struct context_t : public mouse_tracker_wheel_i
 				canvas.layout.cell_height <= 0)
 			return;
 			
-		const int cols = canvas.bounds.w / resolution;
-		const int rows = canvas.bounds.h / resolution;
+		const int cols = canvas.bounds.w / grid_cell_size;
+		const int rows = canvas.bounds.h / grid_cell_size;
 		
-		grid.set_offsets(offset, offset);
-		grid.set_cell_size(resolution, resolution);
-		grid.set_layout(cols + extra*2, rows + extra*2);
+		grid.set_offsets(
+			client_offset_to_grid,
+			client_offset_to_grid);
+			
+		grid.set_cell_size(grid_cell_size, grid_cell_size);
+		
+		grid.set_layout(
+			cols + grid_cell_offset_to_canvas*2,
+			rows + grid_cell_offset_to_canvas*2);
 	}
 	
 	virtual void on_mouse_wheel(int x, int y, int delta, int keys)

@@ -51,7 +51,7 @@ struct box_layout_t
 			for(int j=0, cy=r.y; j<rows; ++j, cy+=ch)
 			{
 				boxes.push_back(
-					rect_t(cx+gap, cy+gap, cw-gap, ch-gap));
+					rect_t(cx+gap, cy+gap, cw-gap-gap, ch-gap-gap));
 			}
 		
 		this->cols = cols;

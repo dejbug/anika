@@ -3,6 +3,7 @@
 
 #include "errors.h"
 #include "temp_object_t.h"
+#include "window_rect_t.h"
 
 
 struct clipper_t
