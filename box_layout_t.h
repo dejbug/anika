@@ -5,6 +5,19 @@
 #include "errors.h"
 #include "rect_t.h"
 #include "mouse_tracker_t.h"
+#include "listeners.h"
+
+
+struct box_layout_listener1_i
+{
+	virtual void on_hover_box(int index, int col, int row) = 0;
+};
+
+struct box_layout_listener2_i
+{
+	virtual void on_enter_box(int index, int col, int row) = 0;
+	virtual void on_leave_box(int index, int col, int row) = 0;
+};
 
 
 struct box_layout_t :
@@ -17,6 +30,9 @@ struct box_layout_t :
 	int roundness;
 	
 	int last_hovered_box;
+	
+	std::vector<box_layout_listener1_i*> listeners1;
+	std::vector<box_layout_listener2_i*> listeners2;
 	
 	static bool allow_rounding_errors;
 	static bool only_hit_test_visible;
@@ -78,22 +94,15 @@ struct box_layout_t :
 		cell_width = cell_height = 0;
 	}
 	
-	virtual void on_hover_box(int index, int col, int row)
-	{
-	}
-	
-	virtual void on_enter_box(int index, int col, int row)
-	{
-		printf("%3d - %3d:%d   \r",
-			index, col, row);
-	}
-	
 	virtual void on_leave_box(int index, int col, int row)
 	{
+		NOTIFY_LISTENERS(listeners2)->
+			on_leave_box(index, col, row);
+			
 		printf("\t\t\t\t\t\r");
 	}
 	
-	bool hittest(int x, int y, int &index, int &col, int &row)
+	bool hittest(int x, int y, int &index, int &col, int &row) const
 	{
 		if(!bounds.contains(x,y))
 			return false;
@@ -122,18 +131,23 @@ struct box_layout_t :
 		
 		if(hittest(x, y, index, col, row))
 		{
-			on_hover_box(index, col, row);
+			NOTIFY_LISTENERS(listeners1)->
+				on_hover_box(index, col, row);
 			
 			if(index != last_hovered_box)
 			{
 				last_hovered_box = index;
-				on_enter_box(index, col, row);
+				
+				NOTIFY_LISTENERS(listeners2)->
+					on_enter_box(index, col, row);
 			}
 		}
 		else
 		{
 			if(last_hovered_box > -1)
-				on_leave_box(index, col, row);
+				NOTIFY_LISTENERS(listeners2)->
+					on_leave_box(index, col, row);
+					
 			last_hovered_box = -1;
 		}
 	}

@@ -2,27 +2,22 @@
 #include <windows.h>
 #include <zmouse.h>
 #include <vector>
+#include "listeners.h"
 
 
 struct mouse_tracker_move_i
 {
-	typedef std::vector<mouse_tracker_move_i*> pvector;
-	
 	virtual void on_mouse_move(int x, int y) = 0;
 };
 
 struct mouse_tracker_wheel_i
 {
-	typedef std::vector<mouse_tracker_wheel_i*> pvector;
-	
 	virtual void on_mouse_wheel(int x, int y,
 		int delta, int keys) = 0;
 };
 
 struct mouse_tracker_clicks_i
 {
-	typedef std::vector<mouse_tracker_clicks_i*> pvector;
-	
 	virtual void on_mouse_down(int x, int y,
 		int b, int keys) = 0;
 	
@@ -33,13 +28,9 @@ struct mouse_tracker_clicks_i
 
 struct mouse_tracker_t
 {
-	mouse_tracker_move_i::pvector move_listeners;
-	mouse_tracker_wheel_i::pvector wheel_listeners;
-	mouse_tracker_clicks_i::pvector clicks_listeners;
-	
-	mouse_tracker_t()
-	{
-	}
+	std::vector<mouse_tracker_move_i*> move_listeners;
+	std::vector<mouse_tracker_wheel_i*> wheel_listeners;
+	std::vector<mouse_tracker_clicks_i*> clicks_listeners;
 	
 	void callback(HWND h, UINT m, WPARAM w, LPARAM l)
 	{
@@ -50,12 +41,8 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				for(mouse_tracker_move_i::pvector::iterator
-						it=move_listeners.begin();
-						it < move_listeners.end();
-						++it)
-						
-					(*it)->on_mouse_move(x, y);
+				NOTIFY_LISTENERS(move_listeners)
+					->on_mouse_move(x, y);
 				
 			}	break;
 			
@@ -66,12 +53,8 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				for(mouse_tracker_wheel_i::pvector::iterator
-						it=wheel_listeners.begin();
-						it < wheel_listeners.end();
-						++it)
-						
-					(*it)->on_mouse_wheel(x, y, delta, keys);
+				NOTIFY_LISTENERS(wheel_listeners)
+					->on_mouse_wheel(x, y, delta, keys);
 					
 			}	break;
 			
@@ -81,12 +64,8 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				for(mouse_tracker_clicks_i::pvector::iterator
-						it=clicks_listeners.begin();
-						it < clicks_listeners.end();
-						++it)
-						
-					(*it)->on_mouse_down(x, y, 1, keys);
+				NOTIFY_LISTENERS(clicks_listeners)
+					->on_mouse_down(x, y, 1, keys);
 				
 			}	break;
 			
@@ -96,12 +75,8 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				for(mouse_tracker_clicks_i::pvector::iterator
-						it=clicks_listeners.begin();
-						it < clicks_listeners.end();
-						++it)
-						
-					(*it)->on_mouse_up(x, y, 1, keys);
+				NOTIFY_LISTENERS(clicks_listeners)
+					->on_mouse_up(x, y, 1, keys);
 				
 			}	break;
 			
@@ -111,12 +86,8 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				for(mouse_tracker_clicks_i::pvector::iterator
-						it=clicks_listeners.begin();
-						it < clicks_listeners.end();
-						++it)
-						
-					(*it)->on_mouse_down(x, y, 2, keys);
+				NOTIFY_LISTENERS(clicks_listeners)
+					->on_mouse_down(x, y, 2, keys);
 				
 			}	break;
 			
@@ -126,12 +97,8 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				for(mouse_tracker_clicks_i::pvector::iterator
-						it=clicks_listeners.begin();
-						it < clicks_listeners.end();
-						++it)
-						
-					(*it)->on_mouse_up(x, y, 2, keys);
+				NOTIFY_LISTENERS(clicks_listeners)
+					->on_mouse_up(x, y, 2, keys);
 				
 			}	break;
 			
@@ -141,12 +108,8 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				for(mouse_tracker_clicks_i::pvector::iterator
-						it=clicks_listeners.begin();
-						it < clicks_listeners.end();
-						++it)
-						
-					(*it)->on_mouse_down(x, y, 3, keys);
+				NOTIFY_LISTENERS(clicks_listeners)
+					->on_mouse_down(x, y, 3, keys);
 				
 			}	break;
 			
@@ -156,12 +119,8 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				for(mouse_tracker_clicks_i::pvector::iterator
-						it=clicks_listeners.begin();
-						it < clicks_listeners.end();
-						++it)
-						
-					(*it)->on_mouse_up(x, y, 3, keys);
+				NOTIFY_LISTENERS(clicks_listeners)
+					->on_mouse_up(x, y, 3, keys);
 				
 			}	break;
 		}

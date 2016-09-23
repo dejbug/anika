@@ -9,7 +9,8 @@
 
 
 struct context_t :
-		public mouse_tracker_wheel_i
+		public mouse_tracker_wheel_i,
+		public box_layout_listener2_i
 {
 	HWND frame;
 	canvas2_t canvas;
@@ -40,6 +41,7 @@ struct context_t :
 		
 		tracker.wheel_listeners.push_back(this);
 		tracker.move_listeners.push_back(&canvas.layout);
+		canvas.layout.listeners2.push_back(this);
 	}
 	
 	void update_canvas()
@@ -97,4 +99,16 @@ struct context_t :
 			win::repaint_window(frame);
 		}
 	}
+	
+	virtual void on_enter_box(int index, int col, int row)
+	{
+		printf("%3d - %3d:%d   \r",
+			index, col, row);
+	}
+	
+	virtual void on_leave_box(int index, int col, int row)
+	{
+		printf("\t\t\t\t\t\r");
+	}
+	
 };

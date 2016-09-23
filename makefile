@@ -1,7 +1,7 @@
 
 LDFLAGS_RELEASE:=-Wl,--subsystem=windows
 LDFLAGS:=-lgdi32
-CXXFLAGS:=-Wall -Wno-unused-variable
+CXXFLAGS:=-Wall -Wno-unused-variable --std=c++11
 
 INC_DIRS:=\
 	"c:\Programme\3\libpng\include"
