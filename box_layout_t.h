@@ -4,20 +4,27 @@
 #include "error_t.h"
 #include "errors.h"
 #include "rect_t.h"
+#include "mouse_tracker_t.h"
 
 
-struct box_layout_t
+struct box_layout_t :
+		public mouse_tracker_move_i
 {
 	rect_t::vector boxes;
+	rect_t bounds;
 	int cols, rows;
 	int cell_width, cell_height, gap;
 	int roundness;
 	
+	int last_hovered_box;
+	
 	static bool allow_rounding_errors;
+	static bool only_hit_test_visible;
 	
 	box_layout_t() :
-		cols(1), rows(1),
-		roundness(0)
+		cols(0), rows(0),
+		roundness(0),
+		last_hovered_box(-1)
 	{
 	}
 	
@@ -47,13 +54,14 @@ struct box_layout_t
 		
 		int cx = r.x, cy = r.y;
 		
-		for(int i=0, cx=r.x; i<cols; ++i, cx+=cw)
-			for(int j=0, cy=r.y; j<rows; ++j, cy+=ch)
+		for(int j=0, cy=r.y; j<rows; ++j, cy+=ch)
+			for(int i=0, cx=r.x; i<cols; ++i, cx+=cw)
 			{
 				boxes.push_back(
 					rect_t(cx+gap, cy+gap, cw-gap-gap, ch-gap-gap));
 			}
 		
+		bounds = r;
 		this->cols = cols;
 		this->rows = rows;
 		this->cell_width = cw;
@@ -65,7 +73,68 @@ struct box_layout_t
 	{
 		boxes.clear();
 	}
+	
+	virtual void on_hover_box(int index, int col, int row)
+	{
+	}
+	
+	virtual void on_enter_box(int index, int col, int row)
+	{
+		printf("%3d - %3d:%d   \r",
+			index, col, row);
+	}
+	
+	virtual void on_leave_box(int index, int col, int row)
+	{
+		printf("\t\t\t\t\t\r");
+	}
+	
+	bool hittest(int x, int y, int &index, int &col, int &row)
+	{
+		if(!bounds.contains(x,y))
+			return false;
+			
+		col = (x-bounds.x) / cell_width;
+		row = (y-bounds.y) / cell_height;
+		index = row * cols + col;
+		
+		if(index >= 0 && index < (int)boxes.size())
+		{
+			if(only_hit_test_visible)
+			{
+				if(	boxes[index].contains(x, y))
+					return true;
+			}
+			else
+				return true;
+		}
+		
+		return false;
+	}
+	
+	virtual void on_mouse_move(int x, int y)
+	{
+		int index, col, row;
+		
+		if(hittest(x, y, index, col, row))
+		{
+			on_hover_box(index, col, row);
+			
+			if(index != last_hovered_box)
+			{
+				last_hovered_box = index;
+				on_enter_box(index, col, row);
+			}
+		}
+		else
+		{
+			if(last_hovered_box > -1)
+				on_leave_box(index, col, row);
+			last_hovered_box = -1;
+		}
+	}
 };
 
 
 bool box_layout_t::allow_rounding_errors = true;
+bool box_layout_t::only_hit_test_visible = true;

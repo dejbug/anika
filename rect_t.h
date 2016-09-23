@@ -68,6 +68,11 @@ struct rect_t
 		w = r-l;
 		h = b-t;
 	}
+	
+	bool contains(int x, int y) const
+	{
+		return x >= l && x <= r && y >= t && y <= b;
+	}
 };
 
 

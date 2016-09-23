@@ -8,7 +8,8 @@
 #include "win.h"
 
 
-struct context_t : public mouse_tracker_wheel_i
+struct context_t :
+		public mouse_tracker_wheel_i
 {
 	HWND frame;
 	canvas2_t canvas;
@@ -38,6 +39,7 @@ struct context_t : public mouse_tracker_wheel_i
 		recalc_grid_layout();
 		
 		tracker.wheel_listeners.push_back(this);
+		tracker.move_listeners.push_back(&canvas.layout);
 	}
 	
 	void update_canvas()
