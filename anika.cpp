@@ -41,6 +41,13 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 				case VK_ESCAPE:
 					win::close_window(h);
 					break;
+					
+				case VK_F2:
+					// test resetting the canvas.
+					defcon.canvas.layout.reset();
+					InvalidateRect(h, NULL, TRUE);
+					UpdateWindow(h);
+					break;
 			}
 			break;
 		

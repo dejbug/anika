@@ -37,7 +37,7 @@ struct box_layout_t :
 	
 	void setup(const rect_t& r, int cols, int rows, int gap=0)
 	{
-		boxes.clear();
+		reset();
 		
 		if(cols <= 0 || rows <= 0)
 			throw error_t(err::ARGS);
@@ -72,6 +72,10 @@ struct box_layout_t :
 	void reset()
 	{
 		boxes.clear();
+		bounds = rect_t();
+		last_hovered_box = -1;
+		cols = rows = gap = 0;
+		cell_width = cell_height = 0;
 	}
 	
 	virtual void on_hover_box(int index, int col, int row)
