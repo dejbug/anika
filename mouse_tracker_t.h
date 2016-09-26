@@ -3,6 +3,7 @@
 #include <zmouse.h>
 #include <vector>
 #include "listeners.h"
+#include "dnd_tracker_t.h"
 
 
 struct mouse_tracker_move_i
@@ -28,9 +29,9 @@ struct mouse_tracker_clicks_i
 
 struct mouse_tracker_t
 {
-	std::vector<mouse_tracker_move_i*> move_listeners;
-	std::vector<mouse_tracker_wheel_i*> wheel_listeners;
-	std::vector<mouse_tracker_clicks_i*> clicks_listeners;
+	std::vector<mouse_tracker_move_i*> move;
+	std::vector<mouse_tracker_wheel_i*> wheel;
+	std::vector<mouse_tracker_clicks_i*> click;
 	
 	void callback(HWND h, UINT m, WPARAM w, LPARAM l)
 	{
@@ -41,7 +42,7 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				NOTIFY_LISTENERS(move_listeners)
+				NOTIFY_LISTENERS(move)
 					->on_mouse_move(x, y);
 				
 			}	break;
@@ -53,7 +54,7 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				NOTIFY_LISTENERS(wheel_listeners)
+				NOTIFY_LISTENERS(wheel)
 					->on_mouse_wheel(x, y, delta, keys);
 					
 			}	break;
@@ -64,7 +65,7 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				NOTIFY_LISTENERS(clicks_listeners)
+				NOTIFY_LISTENERS(click)
 					->on_mouse_down(x, y, 1, keys);
 				
 			}	break;
@@ -75,7 +76,7 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				NOTIFY_LISTENERS(clicks_listeners)
+				NOTIFY_LISTENERS(click)
 					->on_mouse_up(x, y, 1, keys);
 				
 			}	break;
@@ -86,7 +87,7 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				NOTIFY_LISTENERS(clicks_listeners)
+				NOTIFY_LISTENERS(click)
 					->on_mouse_down(x, y, 2, keys);
 				
 			}	break;
@@ -97,7 +98,7 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				NOTIFY_LISTENERS(clicks_listeners)
+				NOTIFY_LISTENERS(click)
 					->on_mouse_up(x, y, 2, keys);
 				
 			}	break;
@@ -108,7 +109,7 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				NOTIFY_LISTENERS(clicks_listeners)
+				NOTIFY_LISTENERS(click)
 					->on_mouse_down(x, y, 3, keys);
 				
 			}	break;
@@ -119,7 +120,7 @@ struct mouse_tracker_t
 				const int x = LOWORD(l);
 				const int y = HIWORD(l);
 				
-				NOTIFY_LISTENERS(clicks_listeners)
+				NOTIFY_LISTENERS(click)
 					->on_mouse_up(x, y, 3, keys);
 				
 			}	break;

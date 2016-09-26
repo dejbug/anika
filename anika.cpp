@@ -1,5 +1,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <shellapi.h>
 #include <stdio.h>
 #include <string>
 
@@ -25,6 +26,7 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 	switch(m)
 	{
 		case WM_CREATE:
+			DragAcceptFiles(h, TRUE);
 			break;
 		
 		case WM_CLOSE:

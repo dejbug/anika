@@ -1,6 +1,6 @@
 
 LDFLAGS_RELEASE:=-Wl,--subsystem=windows
-LDFLAGS:=-lgdi32
+LDFLAGS:=-lgdi32 -lshell32
 CXXFLAGS:=-Wall -Wno-unused-variable --std=c++11
 
 INC_DIRS:=\

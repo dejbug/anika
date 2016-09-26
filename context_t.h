@@ -3,19 +3,20 @@
 #include <vector>
 
 #include "error_t.h"
-#include "mouse_tracker_t.h"
+#include "multi_tracker_t.h"
 #include "canvas2_t.h"
 #include "win.h"
 
 
 struct context_t :
 		public mouse_tracker_wheel_i,
+		public dnd_tracker_drops_i,
 		public box_layout_listener2_i
 {
 	HWND frame;
 	canvas2_t canvas;
 	mouse_grid_t grid;
-	mouse_tracker_t tracker;
+	multi_tracker_t tracker;
 	
 	const int max_cols, max_rows;
 	
@@ -39,8 +40,10 @@ struct context_t :
 		canvas.layout.setup(canvas.bounds, 1, 1, 6);
 		recalc_grid_layout();
 		
-		tracker.wheel_listeners.push_back(this);
-		tracker.move_listeners.push_back(&canvas.layout);
+		tracker.mouse.wheel.push_back(this);
+		tracker.mouse.move.push_back(&canvas.layout);
+		tracker.dnd.listeners.push_back(this);
+		
 		canvas.layout.listeners2.push_back(this);
 	}
 	
@@ -111,4 +114,15 @@ struct context_t :
 		printf("\t\t\t\t\t\r");
 	}
 	
+	virtual void on_drop(int x, int y,
+			std::vector<std::string>& names)
+	{
+		printf("* dropped %d files at (%d:%d)\n",
+			names.size(), x, y);
+		
+		int n = 0;
+		
+		for(auto it=names.begin(); it<names.end(); ++it, ++n)
+			printf(" - %d '%s'\n", n+1, it->c_str());
+	}
 };
