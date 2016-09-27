@@ -5,18 +5,24 @@
 #include "error_t.h"
 #include "multi_tracker_t.h"
 #include "canvas2_t.h"
+#include "box_layout_merger_t.h"
+#include "box_layout_highlighter_t.h"
+#include "rect_t.h"
 #include "win.h"
 
 
 struct context_t :
 		public mouse_tracker_wheel_i,
 		public dnd_tracker_drops_i,
-		public box_layout_listener2_i
+		public box_layout_listener2_i,
+		public box_layout_merge_i
 {
 	HWND frame;
 	canvas2_t canvas;
 	mouse_grid_t grid;
 	multi_tracker_t tracker;
+	box_layout_merger_t box_merger;
+	box_layout_highlighter_t highlighter;
 	
 	const int max_cols, max_rows;
 	
@@ -27,6 +33,8 @@ struct context_t :
 	context_t() :
 		frame(NULL),
 		canvas(12),
+		box_merger(canvas.layout),
+		highlighter(canvas.layout),
 		max_cols(12),
 		max_rows(12),
 		client_offset_to_grid(8),
@@ -45,6 +53,11 @@ struct context_t :
 		tracker.dnd.listeners.push_back(this);
 		
 		canvas.layout.listeners2.push_back(this);
+		
+		tracker.mouse.click.push_back(&box_merger);
+		canvas.layout.listeners2.push_back(&box_merger);
+		
+		box_merger.listeners.push_back(this);
 	}
 	
 	void update_canvas()
@@ -83,6 +96,11 @@ struct context_t :
 			rows + grid_cell_offset_to_canvas*2);
 	}
 	
+	void on_pre_grid_draw(HDC hdc, COLORREF bg)
+	{	
+		highlighter.on_pre_grid_draw(hdc, bg);
+	}
+	
 	virtual void on_mouse_wheel(int x, int y, int delta, int keys)
 	{
 		const int inc = delta > 0 ? +1 : -1;
@@ -105,13 +123,23 @@ struct context_t :
 	
 	virtual void on_enter_box(int index, int col, int row)
 	{
-		printf("%3d - %3d:%d   \r",
-			index, col, row);
+		if(canvas.layout.last_hovered_box > -1)
+		{
+			printf("%3d - %3d:%d   \r",
+				index, col, row);
+			
+			highlighter.last_hilit_box =
+				canvas.layout.last_hovered_box;
+				
+			win::repaint_window(frame);
+		}
 	}
 	
 	virtual void on_leave_box(int index, int col, int row)
 	{
 		printf("\t\t\t\t\t\r");
+		
+		win::repaint_window(frame);
 	}
 	
 	virtual void on_drop(int x, int y,
@@ -124,5 +152,31 @@ struct context_t :
 		
 		for(auto it=names.begin(); it<names.end(); ++it, ++n)
 			printf(" - %d '%s'\n", n+1, it->c_str());
+	}
+	
+	virtual void on_merge(int src, int dst)
+	{
+		printf("\t\t\t\t\t\r");
+		printf("merge %d -> %d\n", src, dst);
+		
+		/// are boxes neighbors?
+		if(
+				src + 1 == dst ||
+				src - 1 == dst ||
+				src + canvas.layout.cols == dst ||
+				src - canvas.layout.cols == dst
+				)
+		{
+			printf(" ok\n");
+			
+			int const a = src < dst ? src : dst;
+			int const b = src < dst ? dst : src;
+			
+			canvas.layout.boxes[a].r = canvas.layout.boxes[b].r;
+			canvas.layout.boxes[a].b = canvas.layout.boxes[b].b;
+			canvas.layout.boxes[b] = rect_t();
+			
+			win::repaint_window(frame);
+		}
 	}
 };

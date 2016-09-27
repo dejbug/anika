@@ -51,6 +51,11 @@ struct box_layout_t :
 			draw_rect(hdc, *it, roundness);
 	}
 	
+	void draw(HDC hdc, int n)
+	{
+		draw_rect(hdc, boxes[n], roundness);
+	}
+	
 	void setup(const rect_t& r, int cols, int rows, int gap=0)
 	{
 		reset();
@@ -92,14 +97,6 @@ struct box_layout_t :
 		last_hovered_box = -1;
 		cols = rows = gap = 0;
 		cell_width = cell_height = 0;
-	}
-	
-	virtual void on_leave_box(int index, int col, int row)
-	{
-		NOTIFY_LISTENERS(listeners2)->
-			on_leave_box(index, col, row);
-			
-		printf("\t\t\t\t\t\r");
 	}
 	
 	bool hittest(int x, int y, int &index, int &col, int &row) const
@@ -145,10 +142,12 @@ struct box_layout_t :
 		else
 		{
 			if(last_hovered_box > -1)
+			{
+				last_hovered_box = -1;
+				
 				NOTIFY_LISTENERS(listeners2)->
 					on_leave_box(index, col, row);
-					
-			last_hovered_box = -1;
+			}
 		}
 	}
 };

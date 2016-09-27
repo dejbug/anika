@@ -23,6 +23,8 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	
 	defcon.canvas.draw_area(mdc.handle, colors::white);
 	
+	defcon.on_pre_grid_draw(mdc.handle, colors::white);
+	
 	temp_color_setter_t cs(mdc.handle);
 	cs.fb(true, false);
 	

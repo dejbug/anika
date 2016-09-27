@@ -19,11 +19,8 @@ struct mouse_tracker_wheel_i
 
 struct mouse_tracker_clicks_i
 {
-	virtual void on_mouse_down(int x, int y,
-		int b, int keys) = 0;
-	
-	virtual void on_mouse_up(int x, int y,
-		int b, int keys) = 0;
+	virtual void on_mouse_button(int x, int y,
+		int b, int state, int keys) = 0;
 };
 
 
@@ -66,7 +63,7 @@ struct mouse_tracker_t
 				const int y = HIWORD(l);
 				
 				NOTIFY_LISTENERS(click)
-					->on_mouse_down(x, y, 1, keys);
+					->on_mouse_button(x, y, 1, 1, keys);
 				
 			}	break;
 			
@@ -77,7 +74,7 @@ struct mouse_tracker_t
 				const int y = HIWORD(l);
 				
 				NOTIFY_LISTENERS(click)
-					->on_mouse_up(x, y, 1, keys);
+					->on_mouse_button(x, y, 1, 0, keys);
 				
 			}	break;
 			
@@ -88,7 +85,7 @@ struct mouse_tracker_t
 				const int y = HIWORD(l);
 				
 				NOTIFY_LISTENERS(click)
-					->on_mouse_down(x, y, 2, keys);
+					->on_mouse_button(x, y, 2, 1, keys);
 				
 			}	break;
 			
@@ -99,7 +96,7 @@ struct mouse_tracker_t
 				const int y = HIWORD(l);
 				
 				NOTIFY_LISTENERS(click)
-					->on_mouse_up(x, y, 2, keys);
+					->on_mouse_button(x, y, 2, 0, keys);
 				
 			}	break;
 			
@@ -110,7 +107,7 @@ struct mouse_tracker_t
 				const int y = HIWORD(l);
 				
 				NOTIFY_LISTENERS(click)
-					->on_mouse_down(x, y, 3, keys);
+					->on_mouse_button(x, y, 3, 1, keys);
 				
 			}	break;
 			
@@ -121,7 +118,7 @@ struct mouse_tracker_t
 				const int y = HIWORD(l);
 				
 				NOTIFY_LISTENERS(click)
-					->on_mouse_up(x, y, 3, keys);
+					->on_mouse_button(x, y, 3, 0, keys);
 				
 			}	break;
 		}
