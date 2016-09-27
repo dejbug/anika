@@ -4,9 +4,9 @@
 
 #include "error_t.h"
 #include "multi_tracker_t.h"
-#include "canvas2_t.h"
+#include "canvas3_t.h"
+#include "box_layout2_t.h"
 #include "box_layout_merger_t.h"
-#include "box_layout_highlighter_t.h"
 #include "rect_t.h"
 #include "win.h"
 
@@ -18,11 +18,11 @@ struct context_t :
 		public box_layout_merge_i
 {
 	HWND frame;
-	canvas2_t canvas;
+	box_layout2_t layout;
+	canvas3_t canvas;
 	mouse_grid_t grid;
 	multi_tracker_t tracker;
 	box_layout_merger_t box_merger;
-	box_layout_highlighter_t highlighter;
 	
 	const int max_cols, max_rows;
 	
@@ -32,9 +32,8 @@ struct context_t :
 	
 	context_t() :
 		frame(NULL),
-		canvas(12),
-		box_merger(canvas.layout),
-		highlighter(canvas.layout),
+		canvas(layout, 12),
+		box_merger(layout),
 		max_cols(12),
 		max_rows(12),
 		client_offset_to_grid(8),
@@ -45,17 +44,17 @@ struct context_t :
 			grid_cell_offset_to_canvas * grid_cell_size;
 		
 		canvas.bounds.offset(full_offset, full_offset);
-		canvas.layout.setup(canvas.bounds, 1, 1, 6);
+		layout.setup(canvas.bounds, 1, 1, 6);
 		recalc_grid_layout();
 		
 		tracker.mouse.wheel.push_back(this);
-		tracker.mouse.move.push_back(&canvas.layout);
+		tracker.mouse.move.push_back(&layout);
 		tracker.dnd.listeners.push_back(this);
 		
-		canvas.layout.listeners2.push_back(this);
+		layout.listeners2.push_back(this);
 		
 		tracker.mouse.click.push_back(&box_merger);
-		canvas.layout.listeners2.push_back(&box_merger);
+		layout.listeners2.push_back(&box_merger);
 		
 		box_merger.listeners.push_back(this);
 	}
@@ -64,9 +63,9 @@ struct context_t :
 	{
 		try {
 			canvas.layout.setup(canvas.bounds,
-				canvas.layout.cols,
-				canvas.layout.rows,
-				canvas.layout.gap);
+				layout.grid.cols,
+				layout.grid.rows,
+				layout.grid.gap);
 			
 			recalc_grid_layout();
 		}
@@ -78,8 +77,8 @@ struct context_t :
 	
 	void recalc_grid_layout()
 	{
-		if(canvas.layout.cell_width <= 0 ||
-				canvas.layout.cell_height <= 0)
+		if(layout.grid.cw <= 0 ||
+				layout.grid.ch <= 0)
 			return;
 			
 		const int cols = canvas.bounds.w / grid_cell_size;
@@ -96,25 +95,30 @@ struct context_t :
 			rows + grid_cell_offset_to_canvas*2);
 	}
 	
-	void on_pre_grid_draw(HDC hdc, COLORREF bg)
+	void on_pre_grid_draw(HDC hdc)
 	{	
-		highlighter.on_pre_grid_draw(hdc, bg);
+		layout.draw_areas(hdc);
+	}
+	
+	void on_post_grid_draw(HDC hdc)
+	{	
+		layout.draw_frames(hdc);
 	}
 	
 	virtual void on_mouse_wheel(int x, int y, int delta, int keys)
 	{
 		const int inc = delta > 0 ? +1 : -1;
 		
-		const bool can_decrease = canvas.layout.cols > 1 &&
-			canvas.layout.rows > 1;
+		const bool can_decrease = layout.grid.cols > 1 &&
+			layout.grid.rows > 1;
 			
-		const bool can_increase = canvas.layout.cols < max_cols &&
-			canvas.layout.rows < max_rows;
+		const bool can_increase = layout.grid.cols < max_cols &&
+			layout.grid.rows < max_rows;
 		
 		if((inc < 0 && can_decrease) || (inc > 0 && can_increase))
 		{
-			canvas.layout.cols += inc;
-			canvas.layout.rows += inc;
+			layout.grid.cols += inc;
+			layout.grid.rows += inc;
 			
 			update_canvas();
 			win::repaint_window(frame);
@@ -123,13 +127,13 @@ struct context_t :
 	
 	virtual void on_enter_box(int index, int col, int row)
 	{
-		if(canvas.layout.last_hovered_box > -1)
+		if(layout.last_hovered_box > -1)
 		{
 			printf("%3d - %3d:%d   \r",
 				index, col, row);
 			
-			highlighter.last_hilit_box =
-				canvas.layout.last_hovered_box;
+			layout.last_hilit_box =
+				layout.last_hovered_box;
 				
 			win::repaint_window(frame);
 		}
@@ -163,8 +167,8 @@ struct context_t :
 		if(
 				src + 1 == dst ||
 				src - 1 == dst ||
-				src + canvas.layout.cols == dst ||
-				src - canvas.layout.cols == dst
+				src + layout.grid.cols == dst ||
+				src - layout.grid.cols == dst
 				)
 		{
 			printf(" ok\n");
@@ -172,9 +176,9 @@ struct context_t :
 			int const a = src < dst ? src : dst;
 			int const b = src < dst ? dst : src;
 			
-			canvas.layout.boxes[a].r = canvas.layout.boxes[b].r;
-			canvas.layout.boxes[a].b = canvas.layout.boxes[b].b;
-			canvas.layout.boxes[b] = rect_t();
+			layout.boxes[a].r = layout.boxes[b].r;
+			layout.boxes[a].b = layout.boxes[b].b;
+			layout.boxes[b] = rect_t();
 			
 			win::repaint_window(frame);
 		}

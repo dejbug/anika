@@ -18,12 +18,11 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	PAINTSTRUCT ps;
 	
 	BeginPaint(h, &ps);
+	
 	mdc2_t mdc(ps.hdc);
 	mdc.clear(COLOR_BTNFACE);
 	
-	defcon.canvas.draw_area(mdc.handle, colors::white);
-	
-	defcon.on_pre_grid_draw(mdc.handle, colors::white);
+	defcon.on_pre_grid_draw(mdc.handle);
 	
 	temp_color_setter_t cs(mdc.handle);
 	cs.fb(true, false);
@@ -32,7 +31,7 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	defcon.grid.draw(mdc.handle);
 	
 	
-	defcon.canvas.draw_border(mdc.handle, colors::black);
+	defcon.on_post_grid_draw(mdc.handle);
 	
 	mdc.flip();
 	EndPaint(h, &ps);

@@ -46,7 +46,7 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 					
 				case VK_F2:
 					// test resetting the canvas.
-					defcon.canvas.layout.reset();
+					defcon.layout.reset();
 					InvalidateRect(h, NULL, TRUE);
 					UpdateWindow(h);
 					break;

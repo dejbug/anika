@@ -3,6 +3,7 @@
 
 #include "error_t.h"
 #include "errors.h"
+#include "grid_t.h"
 #include "rect_t.h"
 #include "mouse_tracker_t.h"
 #include "listeners.h"
@@ -23,10 +24,8 @@ struct box_layout_listener2_i
 struct box_layout_t :
 		public mouse_tracker_move_i
 {
+	grid_t grid;
 	rect_t::vector boxes;
-	rect_t bounds;
-	int cols, rows;
-	int cell_width, cell_height, gap;
 	int roundness;
 	
 	int last_hovered_box;
@@ -38,7 +37,6 @@ struct box_layout_t :
 	static bool only_hit_test_visible;
 	
 	box_layout_t() :
-		cols(0), rows(0),
 		roundness(0),
 		last_hovered_box(-1)
 	{
@@ -67,46 +65,34 @@ struct box_layout_t :
 			if(r.w % cols != 0 || r.h % rows != 0)
 				throw error_t(err::ARGS);
 		
-		const int cw = r.w / cols;
-		const int ch = r.h / rows;
-		
-		if(cw <= 0 || ch <= 0)
-			throw error_t(err::ARGS);
+		grid.setup(r, cols, rows, gap);
 		
 		int cx = r.x, cy = r.y;
 		
-		for(int j=0, cy=r.y; j<rows; ++j, cy+=ch)
-			for(int i=0, cx=r.x; i<cols; ++i, cx+=cw)
+		for(int j=0, cy=r.y; j<rows; ++j, cy+=grid.ch)
+			for(int i=0, cx=r.x; i<cols; ++i, cx+=grid.cw)
 			{
 				boxes.push_back(
-					rect_t(cx+gap, cy+gap, cw-gap-gap, ch-gap-gap));
+					rect_t(cx+gap, cy+gap,
+					grid.cw-gap-gap, grid.ch-gap-gap));
 			}
-		
-		bounds = r;
-		this->cols = cols;
-		this->rows = rows;
-		this->cell_width = cw;
-		this->cell_height = ch;
-		this->gap = gap;
 	}
 	
 	void reset()
 	{
+		grid.reset();
 		boxes.clear();
-		bounds = rect_t();
 		last_hovered_box = -1;
-		cols = rows = gap = 0;
-		cell_width = cell_height = 0;
 	}
 	
 	bool hittest(int x, int y, int &index, int &col, int &row) const
 	{
-		if(!bounds.contains(x,y))
+		if(!grid.bounds.contains(x,y))
 			return false;
 			
-		col = (x-bounds.x) / cell_width;
-		row = (y-bounds.y) / cell_height;
-		index = row * cols + col;
+		col = (x-grid.bounds.x) / grid.cw;
+		row = (y-grid.bounds.y) / grid.ch;
+		index = row * grid.cols + col;
 		
 		if(index >= 0 && index < (int)boxes.size())
 		{
