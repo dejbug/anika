@@ -26,7 +26,7 @@ struct box_layout2_t :
 		box_layout_t::setup(r, cols, rows, gap);
 		groups.resize(boxes.size());
 		
-		printf("\ngroups %d\n", groups.size());
+		//~ printf("\ngroups %d\n", groups.size());
 	}
 	
 	void reset()
@@ -67,8 +67,7 @@ struct box_layout2_t :
 	{
 		if(last_hovered_box > -1)
 		{
-			printf("%3d - %3d:%d   \r",
-				index, col, row);
+			//~ printf("%3d - %3d:%d   \r", index, col, row);
 			
 			last_hilit_box = last_hovered_box;
 				
@@ -78,7 +77,7 @@ struct box_layout2_t :
 	
 	virtual void on_leave_box(int index, int col, int row)
 	{
-		printf("\t\t\t\t\t\r");
+		//~ printf("\t\t\t\t\t\r");
 		
 		last_hilit_box = -1;
 	}
