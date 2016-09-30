@@ -33,9 +33,6 @@ struct box_layout_t :
 	std::vector<box_layout_listener1_i*> listeners1;
 	std::vector<box_layout_listener2_i*> listeners2;
 	
-	static bool allow_rounding_errors;
-	static bool only_hit_test_visible;
-	
 	box_layout_t() :
 		roundness(0),
 		last_hovered_box(-1)
@@ -54,7 +51,8 @@ struct box_layout_t :
 		draw_rect(hdc, boxes[n], roundness);
 	}
 	
-	void setup(const rect_t& r, int cols, int rows, int gap=0)
+	void setup(const rect_t& r, int cols, int rows, int gap=0,
+			bool allow_rounding_errors=true)
 	{
 		reset();
 		
@@ -85,7 +83,8 @@ struct box_layout_t :
 		last_hovered_box = -1;
 	}
 	
-	bool hittest(int x, int y, int &index, int &col, int &row) const
+	bool hittest(int x, int y, int &index, int &col, int &row,
+			bool only_visible=true) const
 	{
 		if(!grid.bounds.contains(x,y))
 			return false;
@@ -96,7 +95,7 @@ struct box_layout_t :
 		
 		if(index >= 0 && index < (int)boxes.size())
 		{
-			if(only_hit_test_visible)
+			if(only_visible)
 			{
 				if(	boxes[index].contains(x, y))
 					return true;
@@ -112,7 +111,7 @@ struct box_layout_t :
 	{
 		int index, col, row;
 		
-		if(hittest(x, y, index, col, row))
+		if(hittest(x, y, index, col, row, false))
 		{
 			NOTIFY_LISTENERS(listeners1)->
 				on_hover_box(index, col, row);
@@ -137,7 +136,3 @@ struct box_layout_t :
 		}
 	}
 };
-
-
-bool box_layout_t::allow_rounding_errors = true;
-bool box_layout_t::only_hit_test_visible = true;

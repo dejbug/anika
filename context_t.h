@@ -56,7 +56,7 @@ struct context_t :
 		tracker.mouse.click.push_back(&box_merger);
 		layout.listeners2.push_back(&box_merger);
 		
-		box_merger.listeners.push_back(this);
+		//~ box_merger.listeners.push_back(this);
 	}
 	
 	void update_canvas()
@@ -121,28 +121,18 @@ struct context_t :
 			layout.grid.rows += inc;
 			
 			update_canvas();
+			layout.last_hilit_box = -1;
 			win::repaint_window(frame);
 		}
 	}
 	
 	virtual void on_enter_box(int index, int col, int row)
 	{
-		if(layout.last_hovered_box > -1)
-		{
-			printf("%3d - %3d:%d   \r",
-				index, col, row);
-			
-			layout.last_hilit_box =
-				layout.last_hovered_box;
-				
-			win::repaint_window(frame);
-		}
+		win::repaint_window(frame);
 	}
 	
 	virtual void on_leave_box(int index, int col, int row)
 	{
-		printf("\t\t\t\t\t\r");
-		
 		win::repaint_window(frame);
 	}
 	

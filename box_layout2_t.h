@@ -5,15 +5,20 @@
 
 
 struct box_layout2_t :
-	public box_layout_t
+		public box_layout_t,
+		public box_layout_listener2_i
 {
 	int last_hilit_box;
+	COLORREF hilit_fg_color;
 	
 	std::vector<int> groups;
 
 	box_layout2_t() :
-		box_layout_t()
+		box_layout_t(),
+		last_hilit_box(-1),
+		hilit_fg_color(colors::red)
 	{
+		listeners2.push_back(this);
 	}
 	
 	void setup(const rect_t& r, int cols, int rows, int gap=0)
@@ -41,19 +46,40 @@ struct box_layout2_t :
 	
 	void draw_frames(HDC hdc)
 	{
+		COLORREF const & normal_fg_color = colors::black;
+		
 		temp_color_setter_t cs(hdc);
 		cs.fb(true, false);
-		cs.fg(colors::black);
 		
 		int n=0;
 		for(auto it=boxes.begin(); it<boxes.end(); ++it, ++n)
 		{
 			if(n == last_hilit_box)
-				cs.fg(colors::blue);
+				cs.fg(hilit_fg_color);
 			else
-				cs.fg(colors::black);
+				cs.fg(normal_fg_color);
 			
 			draw_rect(hdc, *it, roundness);
 		}
+	}
+	
+	virtual void on_enter_box(int index, int col, int row)
+	{
+		if(last_hovered_box > -1)
+		{
+			printf("%3d - %3d:%d   \r",
+				index, col, row);
+			
+			last_hilit_box = last_hovered_box;
+				
+			//~ win::repaint_window(frame);
+		}
+	}
+	
+	virtual void on_leave_box(int index, int col, int row)
+	{
+		printf("\t\t\t\t\t\r");
+		
+		last_hilit_box = -1;
 	}
 };

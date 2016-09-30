@@ -46,14 +46,14 @@ struct box_layout_merger_t :
 		
 		if(b == button)
 		{
-			if(state == 1)
+			if(1 == state)
 			{
 				if(layout.hittest(x, y, index, col, row))
 					src_box = index;
 				else
 					src_box = -1;
 			}
-			else if(state == 0)
+			else if(0 == state)
 			{
 				if(src_box > -1 &&
 						layout.hittest(x, y, index, col, row))
