@@ -56,7 +56,7 @@ struct context_t :
 		tracker.mouse.click.push_back(&box_merger);
 		layout.listeners2.push_back(&box_merger);
 		
-		//~ box_merger.listeners.push_back(this);
+		box_merger.listeners.push_back(this);
 	}
 	
 	void update_canvas()

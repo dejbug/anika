@@ -15,7 +15,7 @@ struct box_layout_merge_i
 
 struct box_layout_merger_t :
 		public box_layout_listener2_i,
-		public mouse_tracker_clicks_i
+		public mouse_tracker_click_i
 {
 	box_layout_t& layout;
 	int src_box;
