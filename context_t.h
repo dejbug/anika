@@ -6,7 +6,7 @@
 #include "multi_tracker_t.h"
 #include "canvas3_t.h"
 #include "box_layout2_t.h"
-#include "box_layout_merger_t.h"
+#include "box_layout_merger2_t.h"
 #include "rect_t.h"
 #include "win.h"
 
@@ -22,7 +22,7 @@ struct context_t :
 	canvas3_t canvas;
 	mouse_grid_t grid;
 	multi_tracker_t tracker;
-	box_layout_merger_t box_merger;
+	box_layout_merger2_t box_merger;
 	
 	const int max_cols, max_rows;
 	
@@ -53,7 +53,7 @@ struct context_t :
 		
 		layout.listeners2.push_back(this);
 		
-		tracker.mouse.click.push_back(&box_merger);
+		tracker.mouse.click2.push_back(&box_merger);
 		layout.listeners2.push_back(&box_merger);
 		
 		box_merger.listeners.push_back(this);
