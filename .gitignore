@@ -1,4 +1,5 @@
 extern/
+tests/
 *.exe
 *.dll
 *.o
