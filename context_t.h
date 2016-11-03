@@ -9,6 +9,7 @@
 #include "box_layout_merger3_t.h"
 #include "rect_t.h"
 #include "mergers_t.h"
+#include "temp_hdc_t.h"
 #include "win.h"
 
 
@@ -37,6 +38,7 @@ struct context_t :
 		frame(NULL),
 		canvas(layout, 12),
 		box_merger(layout),
+		mergers(frame, layout),
 		max_cols(12),
 		max_rows(12),
 		client_offset_to_grid(8),
@@ -81,8 +83,7 @@ struct context_t :
 
 	void recalc_grid_layout()
 	{
-		if(layout.grid.cw <= 0 ||
-				layout.grid.ch <= 0)
+		if(layout.grid.cw <= 0 || layout.grid.ch <= 0)
 			return;
 
 		const int cols = canvas.bounds.w / grid_cell_size;
@@ -133,19 +134,17 @@ struct context_t :
 	virtual void on_enter_box(int index, int col, int row)
 	{
 		// win::repaint_window(frame);
-		HDC hdc = GetDC(frame);
-		layout.draw_single_area(hdc, index);
-		layout.draw_single_frame(hdc, index, true);
-		ReleaseDC(frame, hdc);
+		temp_hdc_t hdc(frame);
+		layout.draw_single_area(hdc.handle, index);
+		layout.draw_single_frame(hdc.handle, index, true);
 	}
 
 	virtual void on_leave_box(int index, int col, int row)
 	{
 		// win::repaint_window(frame);
-		HDC hdc = GetDC(frame);
-		layout.draw_single_area(hdc, index);
-		layout.draw_single_frame(hdc, index, false);
-		ReleaseDC(frame, hdc);
+		temp_hdc_t hdc(frame);
+		layout.draw_single_area(hdc.handle, index);
+		layout.draw_single_frame(hdc.handle, index, false);
 	}
 
 	virtual void on_drop(int x, int y,
@@ -162,25 +161,10 @@ struct context_t :
 
 	virtual void on_merge3(int button, int src, int dst)
 	{
-		mergers.join(src, dst);
-
-		if(layout.grid.are_neighbors(src, dst))
-		{
-			int const a = src < dst ? src : dst;
-			int const b = src < dst ? dst : src;
-
-			layout.boxes[a].r = layout.boxes[b].r;
-			layout.boxes[a].b = layout.boxes[b].b;
-			layout.boxes[b] = rect_t();
-
-			// win::repaint_window(frame);
-			HDC hdc = GetDC(frame);
-			layout.draw_single_area(hdc, dst);
-			layout.draw_single_frame(hdc, dst, true);
-			layout.draw_single_area(hdc, src);
-			layout.draw_single_frame(hdc, src, false);
-			ReleaseDC(frame, hdc);
-		}
+		if(button == 1)
+			mergers.join(src, dst);
+		else if(button == 2)
+			mergers.split(src, dst);
 	}
 
 	virtual void on_merge2(int button, trace_t const & trace)
