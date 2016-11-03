@@ -35,4 +35,14 @@ struct grid_t
 		cols = rows = gap = 0;
 		cw = ch = 0;
 	}
+
+	bool are_neighbors(int src, int dst) const
+	{
+		return (
+			src + 1 == dst ||
+			src - 1 == dst ||
+			src + cols == dst ||
+			src - cols == dst
+		);
+	}
 };

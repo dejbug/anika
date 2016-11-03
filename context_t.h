@@ -16,7 +16,8 @@ struct context_t :
 		public mouse_tracker_wheel_i,
 		public dnd_tracker_drops_i,
 		public box_layout_listener2_i,
-		public box_layout_merge2_i
+		public box_layout_merge2_i,
+		public box_layout_merge3_i
 {
 	HWND frame;
 	box_layout2_t layout;
@@ -58,7 +59,8 @@ struct context_t :
 		tracker.mouse.click2.push_back(&box_merger);
 		layout.listeners2.push_back(&box_merger);
 
-		box_merger.listeners.push_back(this);
+		box_merger.listeners2.push_back(this);
+		box_merger.listeners3.push_back(this);
 	}
 
 	void update_canvas()
@@ -150,7 +152,28 @@ struct context_t :
 			printf(" - %d '%s'\n", n+1, it->c_str());
 	}
 
-	virtual void on_merge(int button, trace_t const & trace)
+	virtual void on_merge3(int button, int src, int dst)
+	{
+		printf("\t\t\t\t\t\r");
+
+		mergers.join(src, dst);
+
+		if(layout.grid.are_neighbors(src, dst))
+		{
+			printf(" ok\n");
+
+			int const a = src < dst ? src : dst;
+			int const b = src < dst ? dst : src;
+
+			layout.boxes[a].r = layout.boxes[b].r;
+			layout.boxes[a].b = layout.boxes[b].b;
+			layout.boxes[b] = rect_t();
+
+			win::repaint_window(frame);
+		}
+	}
+
+	virtual void on_merge2(int button, trace_t const & trace)
 	{
 		printf("\t\t\t\t\t\r");
 
@@ -162,27 +185,5 @@ struct context_t :
 				printf("->%d", *it);
 		}
 		printf("\n");
-
-		// mergers.join(src, dst);
-
-		// /// are boxes neighbors?
-		// if(
-		// 		src + 1 == dst ||
-		// 		src - 1 == dst ||
-		// 		src + layout.grid.cols == dst ||
-		// 		src - layout.grid.cols == dst
-		// 		)
-		// {
-		// 	printf(" ok\n");
-
-		// 	int const a = src < dst ? src : dst;
-		// 	int const b = src < dst ? dst : src;
-
-		// 	layout.boxes[a].r = layout.boxes[b].r;
-		// 	layout.boxes[a].b = layout.boxes[b].b;
-		// 	layout.boxes[b] = rect_t();
-
-		// 	win::repaint_window(frame);
-		// }
 	}
 };
