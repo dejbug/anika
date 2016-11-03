@@ -6,7 +6,7 @@
 #include "multi_tracker_t.h"
 #include "canvas3_t.h"
 #include "box_layout2_t.h"
-#include "box_layout_merger2_t.h"
+#include "box_layout_merger3_t.h"
 #include "rect_t.h"
 #include "mergers_t.h"
 #include "win.h"
@@ -16,14 +16,14 @@ struct context_t :
 		public mouse_tracker_wheel_i,
 		public dnd_tracker_drops_i,
 		public box_layout_listener2_i,
-		public box_layout_merge_i
+		public box_layout_merge2_i
 {
 	HWND frame;
 	box_layout2_t layout;
 	canvas3_t canvas;
 	mouse_grid_t grid;
 	multi_tracker_t tracker;
-	box_layout_merger2_t box_merger;
+	box_layout_merger3_t box_merger;
 	mergers_t mergers;
 
 	const int max_cols, max_rows;
@@ -150,31 +150,39 @@ struct context_t :
 			printf(" - %d '%s'\n", n+1, it->c_str());
 	}
 
-	virtual void on_merge(int src, int dst)
+	virtual void on_merge(int button, trace_t const & trace)
 	{
 		printf("\t\t\t\t\t\r");
-		printf("merge %d -> %d\n", src, dst);
 
-		mergers.join(src, dst);
-
-		/// are boxes neighbors?
-		if(
-				src + 1 == dst ||
-				src - 1 == dst ||
-				src + layout.grid.cols == dst ||
-				src - layout.grid.cols == dst
-				)
+		for(auto it = trace.begin(); it < trace.end(); ++it)
 		{
-			printf(" ok\n");
-
-			int const a = src < dst ? src : dst;
-			int const b = src < dst ? dst : src;
-
-			layout.boxes[a].r = layout.boxes[b].r;
-			layout.boxes[a].b = layout.boxes[b].b;
-			layout.boxes[b] = rect_t();
-
-			win::repaint_window(frame);
+			if(trace.begin() == it)
+				printf("merge-trace (button %d) %d", button, *it);
+			else
+				printf("->%d", *it);
 		}
+		printf("\n");
+
+		// mergers.join(src, dst);
+
+		// /// are boxes neighbors?
+		// if(
+		// 		src + 1 == dst ||
+		// 		src - 1 == dst ||
+		// 		src + layout.grid.cols == dst ||
+		// 		src - layout.grid.cols == dst
+		// 		)
+		// {
+		// 	printf(" ok\n");
+
+		// 	int const a = src < dst ? src : dst;
+		// 	int const b = src < dst ? dst : src;
+
+		// 	layout.boxes[a].r = layout.boxes[b].r;
+		// 	layout.boxes[a].b = layout.boxes[b].b;
+		// 	layout.boxes[b] = rect_t();
+
+		// 	win::repaint_window(frame);
+		// }
 	}
 };
