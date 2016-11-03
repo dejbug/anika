@@ -28,7 +28,6 @@ struct box_layout_t :
 	rect_t::vector boxes;
 	int roundness;
 	
-	int last_hovered_box;
 	int last_index, last_col, last_row;
 	
 	std::vector<box_layout_listener1_i*> listeners1;
@@ -36,7 +35,6 @@ struct box_layout_t :
 	
 	box_layout_t() :
 		roundness(0),
-		last_hovered_box(-1),
 		last_index(-1),
 		last_col(-1),
 		last_row(-1)
@@ -84,7 +82,7 @@ struct box_layout_t :
 	{
 		grid.reset();
 		boxes.clear();
-		last_hovered_box = -1;
+		last_index = last_col = last_row = -1;
 	}
 	
 	bool hittest(int x, int y, int &index, int &col, int &row,
@@ -120,7 +118,7 @@ struct box_layout_t :
 			NOTIFY_LISTENERS(listeners1)->
 				on_hover_box(index, col, row);
 			
-			if(index != last_hovered_box)
+			if(index != last_index)
 			{
 				if(last_index > -1)
 				{
@@ -131,8 +129,6 @@ struct box_layout_t :
 				last_index = index;
 				last_col = col;
 				last_row = row;
-
-				last_hovered_box = index;
 				
 				NOTIFY_LISTENERS(listeners2)->
 					on_enter_box(index, col, row);
@@ -140,12 +136,11 @@ struct box_layout_t :
 		}
 		else
 		{
-			if(last_hovered_box > -1)
+			if(last_index > -1)
 			{
 				NOTIFY_LISTENERS(listeners2)->
 					on_leave_box(last_index, last_col, last_row);
 
-				last_hovered_box = -1;
 				last_index = last_col = last_row = -1;
 
 			}

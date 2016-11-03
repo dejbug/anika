@@ -100,9 +100,9 @@ struct box_layout2_t :
 	
 	virtual void on_enter_box(int index, int col, int row)
 	{
-		if(last_hovered_box > -1)
+		if(last_index > -1)
 		{
-			last_hilit_box = last_hovered_box;
+			last_hilit_box = last_index;
 		}
 	}
 	
