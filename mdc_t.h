@@ -18,7 +18,7 @@ struct mdc_t
 		if(!parent) return;
 		
 		handle = CreateCompatibleDC(parent);
-		if(!handle) throw error_t(err::MDC_BMP);
+		if(!handle) throw error_t(err::MDC);
 		
 		resize();
 	}
@@ -48,16 +48,17 @@ struct mdc_t
 		if(bmp) delete_bmp();
 		
 		bmp = CreateCompatibleBitmap(parent, w, h);
+		if(!bmp) throw error_t(err::MDC_BMP);
+
+		SelectObject(handle, (HBITMAP)bmp);
+
 		this->w = w;
 		this->h = h;
-		
-		if(!bmp) return;
-		SelectObject(handle, (HBITMAP)bmp);
 	}
 	
 	void resize()
 	{
-		window_rect_t r(handle, true);
+		window_rect_t r(parent, true);
 		resize(r.w, r.h);
 	}
 	

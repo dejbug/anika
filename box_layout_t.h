@@ -29,13 +29,17 @@ struct box_layout_t :
 	int roundness;
 	
 	int last_hovered_box;
+	int last_index, last_col, last_row;
 	
 	std::vector<box_layout_listener1_i*> listeners1;
 	std::vector<box_layout_listener2_i*> listeners2;
 	
 	box_layout_t() :
 		roundness(0),
-		last_hovered_box(-1)
+		last_hovered_box(-1),
+		last_index(-1),
+		last_col(-1),
+		last_row(-1)
 	{
 	}
 	
@@ -118,6 +122,16 @@ struct box_layout_t :
 			
 			if(index != last_hovered_box)
 			{
+				if(last_index > -1)
+				{
+					NOTIFY_LISTENERS(listeners2)->
+						on_leave_box(last_index, last_col, last_row);
+				}
+
+				last_index = index;
+				last_col = col;
+				last_row = row;
+
 				last_hovered_box = index;
 				
 				NOTIFY_LISTENERS(listeners2)->
@@ -128,10 +142,12 @@ struct box_layout_t :
 		{
 			if(last_hovered_box > -1)
 			{
-				last_hovered_box = -1;
-				
 				NOTIFY_LISTENERS(listeners2)->
-					on_leave_box(index, col, row);
+					on_leave_box(last_index, last_col, last_row);
+
+				last_hovered_box = -1;
+				last_index = last_col = last_row = -1;
+
 			}
 		}
 	}

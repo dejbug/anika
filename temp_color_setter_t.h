@@ -7,13 +7,13 @@
 struct temp_color_setter_t
 {
 	HDC hdc;
+	HPEN const null_pen;
 	HGDIOBJ old_brush, old_pen;
-	HPEN null_pen;
 	
-	temp_color_setter_t(HDC hdc)
+	temp_color_setter_t(HDC hdc) :
+		hdc(hdc),
+		null_pen(CreatePen(PS_NULL, 0, 0))
 	{
-		this->hdc = hdc;
-		
 		old_brush = SelectObject(hdc,
 			(HBRUSH)GetStockObject(DC_BRUSH));
 		
@@ -44,20 +44,14 @@ struct temp_color_setter_t
 	{
 		if(fg)
 			SelectObject(hdc, (HPEN)GetStockObject(DC_PEN));
-		
 		else
-		{
-			if(!null_pen) null_pen = CreatePen(PS_NULL,0,0);
 			SelectObject(hdc, null_pen);
-		}
 	}
 	
 	void bb(bool bg, bool fg=false)
 	{
-		
 		if(bg)
 			SelectObject(hdc, (HBRUSH)GetStockObject(DC_BRUSH));
-		
 		else
 			SelectObject(hdc, (HBRUSH)GetStockObject(NULL_BRUSH));
 	}

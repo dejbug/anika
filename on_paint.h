@@ -20,19 +20,21 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	BeginPaint(h, &ps);
 	
 	mdc2_t mdc(ps.hdc);
-	mdc.clear(COLOR_BTNFACE);
+
+	// mdc.clear(COLOR_BTNFACE);
+	mdc.clear(color_t(RGB(220,200,180)));
 	
 	defcon.on_pre_grid_draw(mdc.handle);
 	
-	temp_color_setter_t cs(mdc.handle);
-	cs.fb(true, false);
+	// temp_color_setter_t cs(mdc.handle);
+	// cs.fb(true, false);
 	
-	cs.fg(colors::mistyrose);
-	defcon.grid.draw(mdc.handle);
-	
+	// cs.fg(colors::mistyrose);
+	// defcon.grid.draw(mdc.handle);
 	
 	defcon.on_post_grid_draw(mdc.handle);
-	
+
 	mdc.flip();
+
 	EndPaint(h, &ps);
 }

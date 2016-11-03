@@ -62,13 +62,11 @@ struct box_layout_merger3_t :
 	virtual void on_mouse_button_up(int x, int y,
 		int b, unsigned int keys)
 	{
-		int index, col, row;
-
-		if(src_box > -1 &&
-				layout.hittest(x, y, index, col, row))
-
+		if(src_box > -1)
+		{
 			NOTIFY_LISTENERS(listeners2)->
 				on_merge2(drag_button, trace);
+		}
 
 		drag_button = 0;
 		trace.clear();
@@ -80,10 +78,10 @@ struct box_layout_merger3_t :
 	{
 		if(drag_button > 0)
 		{
-			trace.push_back(index);
-
 			NOTIFY_LISTENERS(listeners3)->
 				on_merge3(drag_button, last_box, index);
+
+			trace.push_back(index);
 
 			last_box = index;
 		}

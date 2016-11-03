@@ -21,6 +21,7 @@ struct mdc2_t : public mdc_t
 	void clear(color_t c)
 	{
 		temp_color_setter_t cs(handle);
+		cs.fb(false, true);
 		cs.bg(c.c);
 		
 		window_rect_t r(handle, true);

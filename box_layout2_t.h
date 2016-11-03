@@ -34,6 +34,41 @@ struct box_layout2_t :
 		box_layout_t::reset();
 	}
 	
+	void draw_single_area(HDC hdc, int index)
+	{
+		if(index < 0) index = last_hilit_box;
+
+		if(index < 0 ||
+				static_cast<size_t>(index) >= boxes.size())
+			return;
+
+		temp_color_setter_t cs(hdc);
+		cs.fb(false, true);
+		cs.bg(colors::white);
+		
+		auto it = boxes.begin() + index;
+		draw_rect(hdc, *it, roundness);
+	}
+	
+	void draw_single_frame(HDC hdc, int index, bool hilite=false)
+	{
+		if(index < 0) index = last_hilit_box;
+
+		if(index < 0 ||
+				static_cast<size_t>(index) >= boxes.size())
+			return;
+
+		COLORREF const & normal_fg_color = colors::black;
+		
+		temp_color_setter_t cs(hdc);
+		cs.fb(true, false);
+		
+		cs.fg(hilite ? hilit_fg_color : normal_fg_color);
+		
+		auto it = boxes.begin() + index;
+		draw_rect(hdc, *it, roundness);
+	}
+
 	void draw_areas(HDC hdc)
 	{
 		temp_color_setter_t cs(hdc);
@@ -67,18 +102,12 @@ struct box_layout2_t :
 	{
 		if(last_hovered_box > -1)
 		{
-			//~ printf("%3d - %3d:%d   \r", index, col, row);
-			
 			last_hilit_box = last_hovered_box;
-				
-			//~ win::repaint_window(frame);
 		}
 	}
 	
 	virtual void on_leave_box(int index, int col, int row)
 	{
-		//~ printf("\t\t\t\t\t\r");
-		
 		last_hilit_box = -1;
 	}
 };

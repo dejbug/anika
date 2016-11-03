@@ -132,12 +132,20 @@ struct context_t :
 
 	virtual void on_enter_box(int index, int col, int row)
 	{
-		win::repaint_window(frame);
+		// win::repaint_window(frame);
+		HDC hdc = GetDC(frame);
+		layout.draw_single_area(hdc, index);
+		layout.draw_single_frame(hdc, index, true);
+		ReleaseDC(frame, hdc);
 	}
 
 	virtual void on_leave_box(int index, int col, int row)
 	{
-		win::repaint_window(frame);
+		// win::repaint_window(frame);
+		HDC hdc = GetDC(frame);
+		layout.draw_single_area(hdc, index);
+		layout.draw_single_frame(hdc, index, false);
+		ReleaseDC(frame, hdc);
 	}
 
 	virtual void on_drop(int x, int y,
@@ -154,14 +162,10 @@ struct context_t :
 
 	virtual void on_merge3(int button, int src, int dst)
 	{
-		printf("\t\t\t\t\t\r");
-
 		mergers.join(src, dst);
 
 		if(layout.grid.are_neighbors(src, dst))
 		{
-			printf(" ok\n");
-
 			int const a = src < dst ? src : dst;
 			int const b = src < dst ? dst : src;
 
@@ -169,7 +173,13 @@ struct context_t :
 			layout.boxes[a].b = layout.boxes[b].b;
 			layout.boxes[b] = rect_t();
 
-			win::repaint_window(frame);
+			// win::repaint_window(frame);
+			HDC hdc = GetDC(frame);
+			layout.draw_single_area(hdc, dst);
+			layout.draw_single_frame(hdc, dst, true);
+			layout.draw_single_area(hdc, src);
+			layout.draw_single_frame(hdc, src, false);
+			ReleaseDC(frame, hdc);
 		}
 	}
 

@@ -15,6 +15,7 @@ namespace err { enum {
 	
 	WINDOW_MAKER_CREATE,
 	
+	MDC,
 	MDC_BMP,
 	
 	OUT_OF_BUFFER,
