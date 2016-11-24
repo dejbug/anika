@@ -21,8 +21,8 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	
 	mdc2_t mdc(ps.hdc);
 
-	// mdc.clear(COLOR_BTNFACE);
-	mdc.clear(color_t(RGB(220,200,180)));
+	mdc.clear(COLOR_BTNFACE);
+	// mdc.clear(color_t(RGB(220,200,180)));
 	
 	defcon.on_pre_grid_draw(mdc.handle);
 	
