@@ -1,33 +1,20 @@
 
-LDFLAGS_RELEASE:=-Wl,--subsystem=windows
-LDFLAGS:=-lgdi32 -lshell32
-CXXFLAGS:=-Wall -Wno-unused-variable --std=c++11
+SHELL := cmd.exe
 
-INC_DIRS:=\
-	"c:\Programme\3\libpng\include"
+define del_build_tree
+@IF EXIST build rmdir /S /Q build 2>NUL
+endef
+
+
+all:
+	@make -C src
+	$(call del_build_tree)
+	@mkdir build
+	@move src\anika.exe build\
 	
-LIB_DIRS:=\
-	"c:\Programme\3\libpng\lib"
-	
-INCS:=$(addprefix -I,$(INC_DIRS))
-LIBS:=$(addprefix -L,$(LIB_DIRS))
-
-.PHONY: all clean run release
-
-all: anika.exe
-
-anika.exe: anika.o
-	@g++ -o $@ $< $(LDFLAGS)
-
-anika.o: anika.cpp *.h
-	@g++ -o $@ -c $< $(CXXFLAGS)
-
-run: anika.exe
-	@anika.exe
-
+.PHONY: clean
 clean:
-	@del *.o 2>NUL
-	@del *.exe 2>NUL
-
-release: anika.o
-	@g++ -o anika.exe $< $(LDFLAGS) $(LDFLAGS_RELEASE)
+	$(call del_build_tree)
+	make clean -C src
+	make clean -C src/dejlib
+	
