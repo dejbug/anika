@@ -5,11 +5,11 @@
 #include <string>
 
 // classes
-#include "window_class_t.h"
-#include "window_maker_t.h"
-#include "window_positioner_t.h"
+#include <window_class_t.h>
+#include <window_maker_t.h>
+#include <window_positioner_t.h>
 // namespaces
-#include "win.h"
+#include <win.h>
 
 #include "layouts/box/box.h"
 

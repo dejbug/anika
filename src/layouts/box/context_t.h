@@ -128,6 +128,8 @@ struct context_t :
 		grid.set_layout(
 			cols + grid_cell_offset_to_canvas*2,
 			rows + grid_cell_offset_to_canvas*2);
+
+		mergers.recalc_layout();
 	}
 
 	void on_pre_grid_draw(HDC hdc)

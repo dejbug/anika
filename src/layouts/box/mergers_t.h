@@ -18,6 +18,11 @@ struct mergers_t
 	{
 	}
 
+	void recalc_layout()
+	{
+		printf("mergers::recalc_layout\n");
+	}
+
 	void join(int src, int dst)
 	{
 		if(layout.grid.are_neighbors(src, dst))
