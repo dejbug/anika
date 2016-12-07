@@ -18,3 +18,7 @@ clean:
 	make clean -C src
 	make clean -C src/dejlib
 	
+.PHONY: run
+run: build/anika.exe
+	@build\anika.exe
+	

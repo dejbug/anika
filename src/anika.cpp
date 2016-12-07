@@ -8,36 +8,38 @@
 #include "window_class_t.h"
 #include "window_maker_t.h"
 #include "window_positioner_t.h"
-#include "context_t.h"
 // namespaces
 #include "win.h"
-// functions
-#include "on_paint.h"
 
 #include "layouts/box/box.h"
 
-// globals
-context_t defcon;
+#define IDC_LAYOUT_BOX	1001
+
+
+HWND create_layout_box(HWND parent)
+{
+	window_class_t wc("LAYOUT_BOX");
+	window_maker_t wm(wc);
+	wm.create(parent, IDC_LAYOUT_BOX);
+
+	window_positioner_t wp(wm.handle);
+	wp.setsize(1040, 800);
+	wp.setpos(0,0);
+	
+	UpdateWindow(wm.handle);
+	ShowWindow(wm.handle, SW_SHOW);
+	SetFocus(wm.handle);
+
+	return wm.handle;
+}
 
 
 LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
-	defcon.tracker.callback(h, m, w, l);
-	
+	static HWND layout_box = nullptr;
+
 	switch(m)
 	{
-		case WM_CREATE:
-			DragAcceptFiles(h, TRUE);
-			break;
-		
-		case WM_CLOSE:
-			DestroyWindow(h);
-			break;
-		
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-		
 		case WM_KEYDOWN:
 			switch(w)
 			{
@@ -45,38 +47,45 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 					win::close_window(h);
 					break;
 					
-				case VK_F2:
-					// test resetting the canvas.
-					defcon.layout.reset();
+				case VK_F5:
 					InvalidateRect(h, NULL, TRUE);
 					UpdateWindow(h);
 					break;
 			}
-			break;
+			return 0;
+
+		case WM_SETFOCUS:
+			if(layout_box) SetFocus(layout_box);
+			return 0;
 		
-		case WM_ERASEBKGND:
-			break;
-			
-		case WM_PAINT:
-			on_paint(h, m, w, l);
-			break;
+		case WM_CREATE:
+		{
+			layout_box = create_layout_box(h);
+			return 0;
+		}
+
+		case WM_CLOSE:
+			DestroyWindow(h);
+			return 0;
 		
-		default:
-			return DefWindowProc(h, m, w, l);
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
 	}
-	return 0;
+	
+	return DefWindowProc(h, m, w, l);
 }
 
 
-int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+int WinMain(HINSTANCE i, HINSTANCE, LPSTR, int)
 {
+	layouts::box::register_control(i);
+
 	window_class_t wc("MAINFRAME", MainFrameProc);
 	wc.install();
 	
 	window_maker_t wm(wc);
 	wm.create();
-	
-	defcon.frame = wm.handle;
 	
 	SetWindowText(wm.handle, "anika");
 	

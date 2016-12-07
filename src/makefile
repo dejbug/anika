@@ -14,7 +14,9 @@ CXXFLAGS += -I"dejlib/" -I"app/"
 
 CXX := g++
 NAME := anika
-OBJ := dejlib/dejlib.a
+OBJ := 
+OBJ += layouts/box/box.o
+OBJ += dejlib/dejlib.a
 
 
 .PHONY: all
@@ -33,6 +35,7 @@ release: $(NAME).cpp
 clean:
 	@del $(NAME).exe 2>NUL
 	@del *.o 2>NUL
+	@del layouts\box\box.o 2>NUL
 
 .PHONY: run
 run: $(NAME).exe

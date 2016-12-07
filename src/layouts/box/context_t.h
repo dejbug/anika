@@ -65,6 +65,36 @@ struct context_t :
 		box_merger.listeners3.push_back(this);
 	}
 
+	virtual ~context_t()
+	{
+	}
+
+	static context_t * create(HWND h)
+	{
+		auto ctx = new context_t;
+		ctx->frame = h;
+
+		SetLastError(0);
+		SetWindowLong(h, 0, reinterpret_cast<LONG>(ctx));
+		// if(GetLastError()) /*...*/ ;
+
+		return ctx;
+	}
+
+	static context_t * retrieve(HWND h)
+	{
+		LONG result = GetWindowLong(h, 0);
+		// if(!result) throw error_t;
+		return reinterpret_cast<context_t*>(result);
+	}
+
+	static void destroy(HWND h)
+	{
+		auto ctx = context_t::retrieve(h);
+		if(ctx) delete ctx;
+		SetWindowLong(h, 0, 0L);
+	}
+
 	void update_canvas()
 	{
 		try {
