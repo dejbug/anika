@@ -15,6 +15,10 @@ src/anika.o: src/dejlib/dejlib.a
 src/anika.o: src/layouts/box/box.o
 src/anika.o: src/anika.cpp
 
+src/layouts/box/box.o: src/layouts/box/box.cpp
+src/layouts/box/box.o: src/layouts/box/*.h
+src/layouts/box/box.o: ; $(CXX) $(filter %.cpp,$^) -c -o $@ $(CXXFLAGS)
+
 src/dejlib/dejlib.a: src/dejlib/clipper_t.o
 src/dejlib/dejlib.a: src/dejlib/color_t.o
 src/dejlib/dejlib.a: src/dejlib/dnd_tracker_t.o

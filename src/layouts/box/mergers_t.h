@@ -25,6 +25,8 @@ struct mergers_t
 
 	void join(int src, int dst)
 	{
+		printf("mergers::join(%d, %d)\n", src, dst);
+		
 		if(layout.grid.are_neighbors(src, dst))
 		{
 			int const a = src < dst ? src : dst;
