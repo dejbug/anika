@@ -26,7 +26,7 @@ struct box_layout2_t :
 		box_layout_t::setup(r, cols, rows, gap);
 		groups.resize(boxes.size());
 		
-		//~ printf("\ngroups %d\n", groups.size());
+		printf("\ngroups %d\n", groups.size());
 	}
 	
 	void reset()

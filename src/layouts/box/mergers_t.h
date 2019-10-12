@@ -1,16 +1,79 @@
 #pragma once
 #include <windows.h>
+#include <vector>
 #include <map>
 
 #include "temp_hdc_t.h"
 #include "box_layout2_t.h"
 
 
+struct rgn_t {
+
+	struct error_t {};
+	struct create_error_t : public error_t {};
+
+	HRGN handle;
+
+	rgn_t(rect_t & r, int roundness=0)
+	{
+		handle = CreateRoundRectRgn(r.l, r.t, r.r, r.b,
+			roundness, roundness);
+		if(!handle) throw create_error_t();
+	}
+
+	virtual ~rgn_t()
+	{
+		if(handle) DeleteObject(handle);
+	}
+
+	void merge(rgn_t & other)
+	{
+	}
+};
+
+
+struct rgns_t {
+
+	std::vector<rgn_t> bubbles;
+	std::map<int,int> links;
+
+	rgns_t()
+	{
+	}
+
+	void reset(int cols, int rows, rect_t::vector & boxes, int roundness)
+	{
+		printf("rgns_t::reset(%d, %d, ..., %d)\n", cols, rows, roundness);
+
+		bubbles.clear();
+		links.clear();
+
+		for(size_t i=0; i<boxes.size(); ++i) {
+			bubbles.push_back(rgn_t(boxes[i], roundness));
+			links[i] = boxes.size();
+		}
+	}
+
+	void join(int src, int dst)
+	{
+		printf("rgns_t::join(%d, %d)\n", src, dst);
+		bubbles[src].merge(bubbles[dst]);
+		// bubbles[dst] = nullptr;
+		links[dst] = src;
+	}
+
+	void split(int src, int dst)
+	{
+		printf("rgns_t::split(%d, %d)\n", src, dst);
+	}
+};
+
+
 struct mergers_t
 {
 	HWND & frame;
 	box_layout2_t & layout;
-	std::map<int,int> mapping;
+	rgns_t regions;
 
 	mergers_t(HWND & frame, box_layout2_t & layout) :
 		frame(frame),
@@ -20,13 +83,17 @@ struct mergers_t
 
 	void recalc_layout()
 	{
-		printf("mergers::recalc_layout\n");
+		// printf("mergers::recalc_layout\n");
+		regions.reset(
+			layout.grid.cols, layout.grid.rows,
+			layout.boxes, layout.roundness);
 	}
 
 	void join(int src, int dst)
 	{
-		printf("mergers::join(%d, %d)\n", src, dst);
-		
+		// printf("mergers::join(%d, %d)\n", src, dst);
+		regions.join(src, dst);
+
 		if(layout.grid.are_neighbors(src, dst))
 		{
 			int const a = src < dst ? src : dst;
@@ -47,6 +114,7 @@ struct mergers_t
 
 	void split(int src, int dst)
 	{
+		regions.split(src, dst);
 	}
 };
 
@@ -63,16 +131,4 @@ struct box_t {
 			roundness, roundness);
 	}
 
-};
-
-
-struct rgn_t {
-
-	HRGN handle;
-
-	rgn_t(rect_t & r, int roundness=0)
-	{
-		handle = CreateRoundRectRgn(r.l, r.t, r.r, r.b,
-			roundness, roundness);
-	}
 };

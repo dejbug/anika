@@ -17,9 +17,7 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	if(!ctx) return;
 
 	PAINTSTRUCT ps;
-	
 	BeginPaint(h, &ps);
-	
 	mdc2_t mdc(ps.hdc);
 
 	mdc.clear(COLOR_BTNFACE);
@@ -36,6 +34,5 @@ void on_paint(HWND h, UINT m, WPARAM w, LPARAM l)
 	ctx->on_post_grid_draw(mdc.handle);
 
 	mdc.flip();
-
 	EndPaint(h, &ps);
 }
