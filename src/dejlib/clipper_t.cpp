@@ -16,7 +16,7 @@ void clipper_t::fill()
 	window_rect_t r(h);
 	
 	temp_object_t reg(
-		CreateRectRgn(r.l, r.t, r.r, r.b));
+		CreateRectRgn(r.x, r.y, r.x+r.w, r.y+r.h));
 	
 	SelectClipRgn(hdc, (HRGN)reg.handle);
 }

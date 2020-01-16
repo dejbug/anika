@@ -33,7 +33,6 @@ src/dejlib/dejlib.a: src/dejlib/mouse_grid_t.o
 src/dejlib/dejlib.a: src/dejlib/mouse_tracker_t.o
 src/dejlib/dejlib.a: src/dejlib/multi_tracker_t.o
 src/dejlib/dejlib.a: src/dejlib/palettes.o
-src/dejlib/dejlib.a: src/dejlib/rect_t.o
 src/dejlib/dejlib.a: src/dejlib/temp_color_setter_t.o
 src/dejlib/dejlib.a: src/dejlib/temp_hdc_t.o
 src/dejlib/dejlib.a: src/dejlib/temp_object_t.o

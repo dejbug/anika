@@ -1,6 +1,5 @@
 #include "temp_color_setter_t.h"
 
-
 temp_color_setter_t::temp_color_setter_t(HDC hdc) :
 	hdc(hdc),
 	null_pen(CreatePen(PS_NULL, 0, 0))

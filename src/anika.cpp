@@ -25,9 +25,9 @@ HWND create_layout_box(HWND parent)
 	window_positioner_t wp(wm.handle);
 	wp.setsize(1040, 800);
 	wp.setpos(0,0);
-	
-	UpdateWindow(wm.handle);
+
 	ShowWindow(wm.handle, SW_SHOW);
+	UpdateWindow(wm.handle);
 	SetFocus(wm.handle);
 
 	return wm.handle;
@@ -46,7 +46,7 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 				case VK_ESCAPE:
 					win::close_window(h);
 					break;
-					
+
 				case VK_F5:
 					InvalidateRect(h, NULL, TRUE);
 					UpdateWindow(h);
@@ -57,7 +57,7 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 		case WM_SETFOCUS:
 			if(layout_box) SetFocus(layout_box);
 			return 0;
-		
+
 		case WM_CREATE:
 		{
 			layout_box = create_layout_box(h);
@@ -67,12 +67,12 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 		case WM_CLOSE:
 			DestroyWindow(h);
 			return 0;
-		
+
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			return 0;
 	}
-	
+
 	return DefWindowProc(h, m, w, l);
 }
 
@@ -83,18 +83,18 @@ int WinMain(HINSTANCE i, HINSTANCE, LPSTR, int)
 
 	window_class_t wc("MAINFRAME", MainFrameProc);
 	wc.install();
-	
+
 	window_maker_t wm(wc);
 	wm.create();
-	
+
 	SetWindowText(wm.handle, "anika");
-	
+
 	window_positioner_t wp(wm.handle);
 	wp.setsize(1040, 800);
 	wp.center_to_screen();
-	
+
 	UpdateWindow(wm.handle);
 	ShowWindow(wm.handle, SW_SHOW);
-	
+
 	return win::run();
 }

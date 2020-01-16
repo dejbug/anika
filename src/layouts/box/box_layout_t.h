@@ -25,7 +25,7 @@ struct box_layout_t :
 		public mouse_tracker_move_i
 {
 	grid_t grid;
-	rect_t::vector boxes;
+	rect_t<LONG>::vector boxes;
 	int roundness;
 	
 	int last_index, last_col, last_row;
@@ -43,17 +43,17 @@ struct box_layout_t :
 	
 	void draw(HDC hdc)
 	{
-		for(rect_t::vector::iterator it=boxes.begin();
+		for(rect_t<LONG>::vector::iterator it=boxes.begin();
 				it<boxes.end(); ++it)
-			draw_rect(hdc, *it, roundness);
+			it->draw(hdc, roundness);
 	}
 	
 	void draw(HDC hdc, int n)
 	{
-		draw_rect(hdc, boxes[n], roundness);
+		boxes[n].draw(hdc, roundness);
 	}
 	
-	void setup(const rect_t& r, int cols, int rows, int gap=0,
+	void setup(const rect_t<LONG> & r, int cols, int rows, int gap=0,
 			bool allow_rounding_errors=true)
 	{
 		reset();
@@ -72,9 +72,8 @@ struct box_layout_t :
 		for(int j=0, cy=r.y; j<rows; ++j, cy+=grid.ch)
 			for(int i=0, cx=r.x; i<cols; ++i, cx+=grid.cw)
 			{
-				boxes.push_back(
-					rect_t(cx+gap, cy+gap,
-					grid.cw-gap-gap, grid.ch-gap-gap));
+				boxes.push_back({cx+gap, cy+gap,
+					grid.cw-gap-gap, grid.ch-gap-gap});
 			}
 	}
 	

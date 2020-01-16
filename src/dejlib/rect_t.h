@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <vector>
 
-template<typename T=long>
+template<typename T>
 struct rect_t
 {
 	typedef std::vector<rect_t<T>> vector;
@@ -23,7 +23,7 @@ struct rect_t
 	rect_t(RECT const & _) :
 		x( _.left), y( _.right), w( _.right - _.left), h( _.bottom - _.top)
 	{
-		static_assert(std::is_same<T,LONG>(), "RECT uses LONGs");
+		static_assert(std::is_same<T,LONG>::value, "RECT uses LONGs");
 	}
 
 	rect_t & operator=(rect_t const & _)
@@ -35,13 +35,54 @@ struct rect_t
 		return *this;
 	}
 
-	void offset(long dx, long dy)
+	operator LPRECT()
+	{
+		static_assert(std::is_same<T,LONG>::value, "LPRECT uses LONGs");
+		return reinterpret_cast<LPRECT>(this);
+	}
+
+	operator LPSIZE()
+	{
+		static_assert(std::is_same<T,LONG>::value, "LPSIZE uses LONGs");
+		return reinterpret_cast<LPSIZE>(&static_cast<LONG *>(this)[2]);
+	}
+
+	operator LPPOINT()
+	{
+		static_assert(std::is_same<T,LONG>::value, "LPPOINT uses LONGs");
+		return reinterpret_cast<LPPOINT>(this);
+	}
+
+	operator RECT() const
+	{
+		static_assert(std::is_same<T,LONG>::value, "RECT uses LONGs");
+		return RECT{x, y, x+w, y+h};
+	}
+
+	operator SIZE() const
+	{
+		static_assert(std::is_same<T,LONG>::value, "SIZE uses LONGs");
+		return SIZE{w, h};
+	}
+
+	operator POINT() const
+	{
+		static_assert(std::is_same<T,LONG>::value, "POINT uses LONGs");
+		return POINT{x, y};
+	}
+
+	void reset()
+	{
+		x = y = w = h = 0;
+	}
+
+	void offset(T dx, T dy)
 	{
 		x += dx;
 		y += dx;
 	}
 
-	void inflate(long dw, long dh)
+	void inflate(T dw, T dh)
 	{
 		x -= dw;
 		y -= dh;
@@ -49,13 +90,14 @@ struct rect_t
 		h += dw << 1;
 	}
 
-	bool contains(int x_, int y_) const
+	bool contains(T x_, T y_) const
 	{
 		return x_ >= x && x_ <= x+w && y_ >= y && y_ <= y+h;
 	}
 
 	void draw(HDC hdc, int radius=0)
 	{
+		static_assert(std::is_integral<T>::value, "RoundRect uses int");
 		RoundRect(hdc, x, y, x+w+1, y+h+1, radius, radius);
 	}
 };

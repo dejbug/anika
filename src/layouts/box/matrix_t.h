@@ -101,8 +101,8 @@ struct mappings_t {
 /// kind of index: indices into v2; but this would mean
 /// copying the whole of v1 into v2 at init; though we
 /// could get away with mere references (weak copies).
-/// 
-/// 
+///
+///
 
 // template<class T>
 // struct mergable_i {
@@ -115,7 +115,7 @@ struct matrix_t {
 
 	std::map<Id, Id> links;
 	std::vector<T> * mergables;
-	
+
 	matrix_t() : mergables(nullptr) {
 	}
 
@@ -143,7 +143,7 @@ struct matrix_t {
 };
 
 // class matrix_t {
-// 
+//
 // 	geometry_t geometry;
 // 	mappings_t mappings;
 // 	groups_t groups;
@@ -170,7 +170,7 @@ struct matrix_t {
 
 
 	// 	static Id dummy = 4711;
-		
+
 	// 	Id const & m = a <= b ? a : b;
 
 	// 	mappings.assign(a, m);

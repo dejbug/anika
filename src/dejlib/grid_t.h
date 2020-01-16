@@ -4,12 +4,12 @@
 
 struct grid_t
 {
-	rect_t bounds;
+	rect_t<LONG> bounds;
 	int cols, rows;
 	int cw, ch, gap;
 	
 	grid_t();
-	void setup(const rect_t& r, int cols, int rows, int gap=0);
+	void setup(const rect_t<LONG> & r, int cols, int rows, int gap=0);
 	void reset();
 	bool are_neighbors(int src, int dst) const;
 };

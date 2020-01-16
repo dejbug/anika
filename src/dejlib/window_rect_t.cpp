@@ -17,20 +17,20 @@ void window_rect_t::update(bool client)
 {
 	if(!parent)
 	{
-		left = top = 0;
-		right = GetSystemMetrics(SM_CXSCREEN);
-		bottom = GetSystemMetrics(SM_CYSCREEN);
+		x = y = 0;
+		w = GetSystemMetrics(SM_CXSCREEN);
+		h = GetSystemMetrics(SM_CYSCREEN);
 	}
 	else
 	{
-		BOOL(WINAPI *method_f)(HWND,LPRECT) =
+		BOOL(WINAPI * const method_f)(HWND,LPRECT) =
 			client ? GetClientRect : GetWindowRect;
-		
-		method_f(parent, &rect);
+
+		method_f(parent, static_cast<LPRECT>(*this));
+
+		w = w - x;
+		h = h - y;
 	}
-	
-	width = right - left;
-	height = bottom - top;
 }
 
 SIZE window_rect_t::size() const

@@ -29,7 +29,6 @@ struct context_t :
 	mergers_t mergers;
 
 	const int max_cols, max_rows;
-
 	const int client_offset_to_grid;
 	const int grid_cell_offset_to_canvas;
 	const int grid_cell_size;
@@ -197,6 +196,9 @@ struct context_t :
 			mergers.join(src, dst);
 		else if(button == 2)
 			mergers.split(src, dst);
+
+		//~ InvalidateRect(frame, nullptr, TRUE);
+		//~ UpdateWindow(frame);
 	}
 
 	virtual void on_merge2(int button, trace_t const & trace)
@@ -211,5 +213,8 @@ struct context_t :
 				printf("->%d", *it);
 		}
 		printf("\n");
+
+		InvalidateRect(frame, nullptr, TRUE);
+		UpdateWindow(frame);
 	}
 };

@@ -8,7 +8,7 @@ grid_t::grid_t()
 	reset();
 }
 
-void grid_t::setup(const rect_t& r, int cols, int rows, int gap)
+void grid_t::setup(const rect_t<LONG> & r, int cols, int rows, int gap)
 {
 	reset();
 	
@@ -26,7 +26,7 @@ void grid_t::setup(const rect_t& r, int cols, int rows, int gap)
 
 void grid_t::reset()
 {
-	bounds = rect_t();
+	bounds = rect_t<LONG>();
 	cols = rows = gap = 0;
 	cw = ch = 0;
 }

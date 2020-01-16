@@ -16,7 +16,7 @@ void window_positioner_t::move(int dx, int dy) const
 {
 	window_rect_t r(handle);
 	
-	SetWindowPos(handle, NULL, r.left+dx, r.top+dy, 0, 0,
+	SetWindowPos(handle, NULL, r.x+dx, r.y+dy, 0, 0,
 		extra_flags|SWP_NOZORDER|SWP_NOSIZE);
 }
 
@@ -67,8 +67,8 @@ void window_positioner_t::center_to_screen() const
 	window_rect_t c(handle);
 	window_rect_t p(GetParent(handle));
 	
-	const int dx = (p.width - c.width) >> 1;
-	const int dy = (p.height - c.height) >> 1;
+	const int dx = (p.w - c.w) >> 1;
+	const int dy = (p.h - c.h) >> 1;
 	
-	setpos(p.left + dx, p.top + dy);
+	setpos(p.x + dx, p.y + dy);
 }

@@ -14,9 +14,9 @@ struct rgn_t {
 
 	HRGN handle;
 
-	rgn_t(rect_t & r, int roundness=0)
+	rgn_t(rect_t<LONG> & r, int roundness=0)
 	{
-		handle = CreateRoundRectRgn(r.l, r.t, r.r, r.b,
+		handle = CreateRoundRectRgn(r.x, r.y, r.x+r.w, r.y+r.h,
 			roundness, roundness);
 		if(!handle) throw create_error_t();
 	}
@@ -41,7 +41,7 @@ struct rgns_t {
 	{
 	}
 
-	void reset(int cols, int rows, rect_t::vector & boxes, int roundness)
+	void reset(int cols, int rows, rect_t<LONG>::vector & boxes, int roundness)
 	{
 		printf("rgns_t::reset(%d, %d, ..., %d)\n", cols, rows, roundness);
 
@@ -99,15 +99,18 @@ struct mergers_t
 			int const a = src < dst ? src : dst;
 			int const b = src < dst ? dst : src;
 
-			layout.boxes[a].r = layout.boxes[b].r;
-			layout.boxes[a].b = layout.boxes[b].b;
-			layout.boxes[b] = rect_t();
+			auto & abox = layout.boxes[a];
+			auto & bbox = layout.boxes[b];
+			
+			abox.w = bbox.w;
+			abox.h = bbox.h;
+			bbox.reset();
 
 			// win::repaint_window(frame);
 			temp_hdc_t hdc(frame);
 			layout.draw_single_area(hdc.handle, dst);
 			layout.draw_single_frame(hdc.handle, dst, true);
-			layout.draw_single_area(hdc.handle, src);
+			layout.draw_single_area(hdc.handle, a);
 			layout.draw_single_frame(hdc.handle, src, false);
 		}
 	}
@@ -122,12 +125,12 @@ struct mergers_t
 struct box_t {
 
 	HRGN handle;
-	rect_t r;
+	rect_t<LONG> r;
 	int roundness;
 
-	box_t(rect_t & r, int roundness=0)
+	box_t(rect_t<LONG> & r, int roundness=0)
 	{
-		handle = CreateRoundRectRgn(r.l, r.t, r.r, r.b,
+		handle = CreateRoundRectRgn(r.x, r.y, r.x+r.w, r.y+r.h,
 			roundness, roundness);
 	}
 

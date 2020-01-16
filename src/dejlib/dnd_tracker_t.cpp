@@ -1,5 +1,6 @@
 #include "dnd_tracker_t.h"
 #include "error_t.h"
+#include "errors.h"
 #include "listeners.h"
 
 
@@ -32,7 +33,7 @@ void dnd_tracker_t::callback(HWND h, UINT m, WPARAM w, LPARAM l)
 						
 				/// this should never happen.
 				if(chars_copied != file_name_length)
-					error_t(OUT_OF_BUFFER);
+					throw error_t(err::OUT_OF_BUFFER);
 			
 				names.push_back(name);
 			}

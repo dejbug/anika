@@ -21,7 +21,7 @@ struct box_layout2_t :
 		listeners2.push_back(this);
 	}
 	
-	void setup(const rect_t& r, int cols, int rows, int gap=0)
+	void setup(const rect_t<LONG> & r, int cols, int rows, int gap=0)
 	{
 		box_layout_t::setup(r, cols, rows, gap);
 		groups.resize(boxes.size());
@@ -37,9 +37,8 @@ struct box_layout2_t :
 	void draw_single_area(HDC hdc, int index)
 	{
 		if(index < 0) index = last_hilit_box;
-
-		if(index < 0 ||
-				static_cast<size_t>(index) >= boxes.size())
+		
+		if(index < 0 || static_cast<size_t>(index) >= boxes.size())
 			return;
 
 		temp_color_setter_t cs(hdc);
@@ -47,7 +46,7 @@ struct box_layout2_t :
 		cs.bg(colors::white);
 		
 		auto it = boxes.begin() + index;
-		draw_rect(hdc, *it, roundness);
+		it->draw(hdc, roundness);
 	}
 	
 	void draw_single_frame(HDC hdc, int index, bool hilite=false)
@@ -66,7 +65,7 @@ struct box_layout2_t :
 		cs.fg(hilite ? hilit_fg_color : normal_fg_color);
 		
 		auto it = boxes.begin() + index;
-		draw_rect(hdc, *it, roundness);
+		it->draw(hdc, roundness);
 	}
 
 	void draw_areas(HDC hdc)
@@ -76,7 +75,7 @@ struct box_layout2_t :
 		cs.bg(colors::white);
 		
 		for(auto it=boxes.begin(); it<boxes.end(); ++it)
-			draw_rect(hdc, *it, roundness);
+			it->draw(hdc, roundness);
 	}
 	
 	void draw_frames(HDC hdc)
@@ -94,7 +93,7 @@ struct box_layout2_t :
 			else
 				cs.fg(normal_fg_color);
 			
-			draw_rect(hdc, *it, roundness);
+			it->draw(hdc, roundness);
 		}
 	}
 	

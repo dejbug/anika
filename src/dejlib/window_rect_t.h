@@ -3,7 +3,7 @@
 #include "rect_t.h"
 
 
-struct window_rect_t : public rect_t
+struct window_rect_t : public rect_t<LONG>
 {
 	HWND parent;
 	
