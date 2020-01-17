@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <type_traits>
 #include <vector>
+#include <algorithm>
 
 template<typename T>
 struct rect_t
@@ -69,6 +70,30 @@ struct rect_t
 	{
 		static_assert(std::is_same<T,LONG>::value, "POINT uses LONGs");
 		return POINT{x, y};
+	}
+
+	operator SMALL_RECT() const
+	{
+		static_assert(std::is_same<T,SHORT>::value, "SMALL_RECT uses SHORTs");
+		return SMALL_RECT{x, y};
+	}
+
+	operator POINTS() const
+	{
+		static_assert(std::is_same<T,SHORT>::value, "POINTSSMALL_RECT uses SHORTs");
+		return POINTS{x, y};
+	}
+
+	rect_t<T> operator +(rect_t<T> const & r) const
+	{
+		// FIXME: Turns out that the Win32 layout (i.e. left,
+		// top, right, bottom) is better suited for boolean
+		// combinations (than x, y, w, h). We shall refactor.
+		RECT a, b, z;
+		*this >> a;
+		r >> b;
+		UnionRect(&z, &a, &b);
+		return rect_t<T>{z};
 	}
 
 	void reset()

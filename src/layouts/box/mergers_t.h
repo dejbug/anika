@@ -13,8 +13,10 @@ struct rgn_t {
 	struct create_error_t : public error_t {};
 
 	HRGN handle;
+	rect_t<LONG> & bounds;
+	int roundness;
 
-	rgn_t(rect_t<LONG> & r, int roundness=0)
+	rgn_t(rect_t<LONG> & r, int roundness=0) : bounds(r), roundness(roundness)
 	{
 		handle = CreateRoundRectRgn(r.x, r.y, r.x+r.w, r.y+r.h,
 			roundness, roundness);
@@ -28,6 +30,8 @@ struct rgn_t {
 
 	void merge(rgn_t & other)
 	{
+		bounds = bounds + other.bounds;
+		handle = CreateRoundRectRgn(bounds.x, bounds.y, bounds.x+bounds.w, bounds.y+bounds.h, roundness, roundness);
 	}
 };
 
@@ -101,7 +105,7 @@ struct mergers_t
 
 			auto & abox = layout.boxes[a];
 			auto & bbox = layout.boxes[b];
-			
+
 			abox.w = bbox.w;
 			abox.h = bbox.h;
 			bbox.reset();
