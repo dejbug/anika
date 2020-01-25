@@ -1,56 +1,67 @@
 SHELL := cmd.exe
 CXX := g++
 CXXFLAGS :=
-CXXFLAGS += -std=c++11 -O2 -Wall -pedantic
+CXXFLAGS += -Wall -Wextra -pedantic
+CXXFLAGS += -std=c++17 -fconcepts
 CXXFLAGS += -I"src/dejlib"
 CXXFLAGS += -lgdi32 -lshell32
+CXXFLAGS += -Wno-unused-parameter
 # CXXFLAGS += -Wl,--subsystem=windows
 
-build/anika.exe: src/anika.o
-build/anika.exe: src/layouts/box/box.o
-build/anika.exe: src/dejlib/dejlib.a
-build/anika.exe: ; $(CXX) $^ -o $@ $(CXXFLAGS)
+deploy/anika.exe: build/anika.o
+deploy/anika.exe: build/dejlib.a
 
-src/anika.o: src/dejlib/dejlib.a
-src/anika.o: src/layouts/box/box.o
-src/anika.o: src/anika.cpp
+build: ; $(call MAKEDIR,$@)
+deploy: ; $(call MAKEDIR,$@)
+build/dejlib: | build ; $(call MAKEDIR,$@)
+build/layouts: | build ; $(call MAKEDIR,$@)
+build/layouts/box: | build/layouts ; $(call MAKEDIR,$@)
 
-src/layouts/box/box.o: src/layouts/box/box.cpp
-src/layouts/box/box.o: src/layouts/box/*.h
-src/layouts/box/box.o: ; $(CXX) $(filter %.cpp,$^) -c -o $@ $(CXXFLAGS)
+build/layouts/%.o: src/layouts/%.cpp
+build/layouts/box/box.o: src/layouts/box/*.h
 
-src/dejlib/dejlib.a: src/dejlib/clipper_t.o
-src/dejlib/dejlib.a: src/dejlib/color_t.o
-src/dejlib/dejlib.a: src/dejlib/dnd_tracker_t.o
-src/dejlib/dejlib.a: src/dejlib/error_t.o
-src/dejlib/dejlib.a: src/dejlib/grid_t.o
-src/dejlib/dejlib.a: src/dejlib/mdc2_t.o
-src/dejlib/dejlib.a: src/dejlib/mdc_t.o
-src/dejlib/dejlib.a: src/dejlib/mkeys_t.o
-src/dejlib/dejlib.a: src/dejlib/mouse_drag_tracker_t.o
-src/dejlib/dejlib.a: src/dejlib/mouse_grid_picker_t.o
-src/dejlib/dejlib.a: src/dejlib/mouse_grid_t.o
-src/dejlib/dejlib.a: src/dejlib/mouse_tracker_t.o
-src/dejlib/dejlib.a: src/dejlib/multi_tracker_t.o
-src/dejlib/dejlib.a: src/dejlib/palettes.o
-src/dejlib/dejlib.a: src/dejlib/temp_color_setter_t.o
-src/dejlib/dejlib.a: src/dejlib/temp_hdc_t.o
-src/dejlib/dejlib.a: src/dejlib/temp_object_t.o
-src/dejlib/dejlib.a: src/dejlib/win.o
-src/dejlib/dejlib.a: src/dejlib/window_class_t.o
-src/dejlib/dejlib.a: src/dejlib/window_maker_t.o
-src/dejlib/dejlib.a: src/dejlib/window_positioner_t.o
-src/dejlib/dejlib.a: src/dejlib/window_rect_t.o
-src/dejlib/dejlib.a: ; @ar ru $@ $^
+DEJLIB_SOURCES := $(wildcard src/dejlib/*.cpp)
+DEJLIB_PREREQS := $(DEJLIB_SOURCES:src/%.cpp=build/%.d)
+DEJLIB_OBJECTS := $(DEJLIB_SOURCES:src/%.cpp=build/%.o)
 
-.PHONY: clean
-clean:
-	@del build\anika.exe 2>NUL
-	@del src\*.o 2>NUL
-	@del src\dejlib\*.a 2>NUL
-	@del src\dejlib\*.o 2>NUL
-	@del src\layouts\box\*.o 2>NUL
+deploy/%.exe: | deploy ; $(call LINK,$@,$^)
+build/dejlib.a: $(DEJLIB_OBJECTS) | build/dejlib ; @ar ru $@ $^
+build/dejlib/%.o: src/dejlib/%.cpp | build/dejlib ; $(call COMPILE,$@,$<)
+build/dejlib/%.d: src/dejlib/%.cpp | build/dejlib ; $(call GEN_PREREQ,$@,$<)
+build/%.o: src/%.cpp | build ; $(call COMPILE,$@,$<)
+build/%.d: src/%.cpp | build ; $(call GEN_PREREQ,$@,$<)
+build/layouts/box/%.o: src/layouts/box/%.cpp | build/layouts/box ; $(call COMPILE,$@,$<)
+
+.PHONY: clean reset
+clean:: ; $(call DELTREE,build)
+reset:: | clean ; $(call DELTREE,deploy)
 
 .PHONY: run
-run: build/anika.exe
-	@build\anika.exe
+run: deploy/anika.exe
+	$(subst /,\,$<)
+
+.DELETE_ON_ERROR:
+
+
+include $(DEJLIB_PREREQS)
+
+
+define GEN_PREREQ
+$(CXX) -MF $1 -MM $2 -MT "$(subst .d,.o,$1) $1" $(CXXFLAGS)
+endef
+
+define COMPILE
+$(CXX) -o $1 -c $(filter %.cpp,$2) $(CXXFLAGS)
+endef
+
+define LINK
+$(CXX) -o $1 $(filter %.o %.a,$2) $(CXXFLAGS) $(LDFLAGS)
+endef
+
+define MAKEDIR
+IF NOT EXIST $(subst /,\,$1) MKDIR $(subst /,\,$1)
+endef
+
+define DELTREE
+IF EXIST $(subst /,\,$1) RMDIR /S /Q $(subst /,\,$1)
+endef

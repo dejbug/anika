@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <type_traits>
 #include <vector>
-#include <algorithm>
+
 
 template<typename T>
 struct rect_t
@@ -84,7 +84,7 @@ struct rect_t
 		return POINTS{x, y};
 	}
 
-	rect_t<T> operator +(rect_t<T> const & r) const
+	rect_t<T> & operator +=(rect_t<T> const & r)
 	{
 		// FIXME: Turns out that the Win32 layout (i.e. left,
 		// top, right, bottom) is better suited for boolean
@@ -93,7 +93,8 @@ struct rect_t
 		*this >> a;
 		r >> b;
 		UnionRect(&z, &a, &b);
-		return rect_t<T>{z};
+		*this << z;
+		return *this;
 	}
 
 	void reset()
@@ -120,18 +121,20 @@ struct rect_t
 		return x_ >= x && x_ <= x+w && y_ >= y && y_ <= y+h;
 	}
 
-	void draw(HDC hdc, int radius=0)
+	void draw(HDC hdc, int radius=0) const
 	{
 		static_assert(std::is_integral<T>::value, "RoundRect uses int");
 		RoundRect(hdc, x, y, x+w+1, y+h+1, radius, radius);
 	}
 };
 
+
 template<typename T>
 void draw(rect_t<T> const & r, HDC hdc, int radius=0)
 {
 	r.draw(hdc, radius);
 }
+
 
 template<typename T>
 rect_t<T> & operator<<(rect_t<T> & r, RECT const & _)
@@ -142,6 +145,7 @@ rect_t<T> & operator<<(rect_t<T> & r, RECT const & _)
 	r.h = _.bottom - _.top;
 	return r;
 }
+
 
 template<typename T>
 rect_t<T> const & operator>>(rect_t<T> const & r, RECT & _)

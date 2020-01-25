@@ -3,7 +3,7 @@
 #include <vector>
 
 
-struct mouse_drag_i
+struct mouse_drag_tracker_i
 {
 	virtual void on_mouse_drag_start(int x, int y,
 		int b, unsigned int keys) = 0;
@@ -17,7 +17,7 @@ struct mouse_drag_i
 
 struct mouse_drag_tracker_t
 {
-	std::vector<mouse_drag_i*> drag;
+	std::vector<mouse_drag_tracker_i *> drag;
 
 	int dragging_button;
 

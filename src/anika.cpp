@@ -1,24 +1,21 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shellapi.h>
-#include <stdio.h>
-#include <string>
 
-// classes
+#include <win.h>
+
 #include <window_class_t.h>
 #include <window_maker_t.h>
 #include <window_positioner_t.h>
-// namespaces
-#include <win.h>
 
-#include "layouts/box/box.h"
+#include "layouts/box/box_layout_context_t.h"
 
 #define IDC_LAYOUT_BOX	1001
 
 
 HWND create_layout_box(HWND parent)
 {
-	window_class_t wc("LAYOUT_BOX");
+	window_class_t wc(box_layout_context_t::name);
 	window_maker_t wm(wc);
 	wm.create(parent, IDC_LAYOUT_BOX);
 
@@ -79,7 +76,7 @@ LRESULT CALLBACK MainFrameProc(HWND h, UINT m, WPARAM w, LPARAM l)
 
 int WinMain(HINSTANCE i, HINSTANCE, LPSTR, int)
 {
-	layouts::box::register_control(i);
+	box_layout_context_t::install(i);
 
 	window_class_t wc("MAINFRAME", MainFrameProc);
 	wc.install();

@@ -7,31 +7,37 @@
 #include "rect_t.h"
 #include "mouse_tracker_t.h"
 #include "listeners.h"
+#include "box_layout_merger_t.h"
 
 
-struct box_layout_merge2_i
+struct box_layout_merger_listener2_i
 {
 	typedef std::vector<int> trace_t;
 	virtual void on_merge2(int button, trace_t const & trace) = 0;
 };
 
-struct box_layout_merge3_i
+struct box_layout_merger_listener3_i
 {
 	virtual void on_merge3(int button, int src, int dst) = 0;
 };
+
 
 struct box_layout_merger3_t :
 		public box_layout_listener2_i,
 		public mouse_tracker_click2_i
 {
+	using listener1_i = box_layout_merger_t::listener_i;
+	using listener2_i = box_layout_merger_listener2_i;
+	using listener3_i = box_layout_merger_listener3_i;
+
 	box_layout_t& layout;
 	int src_box;
 	int last_box;
 	int drag_button;
 	std::vector<int> trace;
 
-	std::vector<box_layout_merge2_i*> listeners2;
-	std::vector<box_layout_merge3_i*> listeners3;
+	std::vector<listener2_i *> listeners2;
+	std::vector<listener3_i *> listeners3;
 
 
 	box_layout_merger3_t(box_layout_t& layout) :

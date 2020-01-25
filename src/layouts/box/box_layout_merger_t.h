@@ -8,34 +8,28 @@
 #include "listeners.h"
 
 
-struct box_layout_merge_i
+struct box_layout_merger_listener_i
 {
 	virtual void on_merge(int src, int dst) = 0;
 };
 
+
 struct box_layout_merger_t :
-		public box_layout_listener2_i,
 		public mouse_tracker_click_i
 {
+	using listener_i = box_layout_merger_listener_i;
+
 	box_layout_t& layout;
 	int src_box;
 	int button;
 
-	std::vector<box_layout_merge_i*> listeners;
+	std::vector<listener_i *> listeners;
 
 
 	box_layout_merger_t(box_layout_t& layout) :
 		layout(layout),
 		src_box(-1),
 		button(1)
-	{
-	}
-
-	virtual void on_enter_box(int index, int col, int row)
-	{
-	}
-
-	virtual void on_leave_box(int index, int col, int row)
 	{
 	}
 
