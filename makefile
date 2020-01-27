@@ -17,8 +17,7 @@ build/dejlib: | build ; $(call MAKEDIR,$@)
 build/layouts: | build ; $(call MAKEDIR,$@)
 build/layouts/box: | build/layouts ; $(call MAKEDIR,$@)
 
-build/layouts/%.o: src/layouts/%.cpp
-build/layouts/box/box.o: src/layouts/box/*.h
+build/%.d: src/%.cpp ; $(call GEN_PREREQ,$@,$<)
 
 DEJLIB_SOURCES := $(wildcard src/dejlib/*.cpp)
 DEJLIB_PREREQS := $(DEJLIB_SOURCES:src/%.cpp=build/%.d)
@@ -28,9 +27,10 @@ deploy/%.exe: | deploy ; $(call LINK,$@,$^)
 build/dejlib.a: $(DEJLIB_OBJECTS) | build/dejlib ; @ar ru $@ $^
 build/dejlib/%.o: src/dejlib/%.cpp | build/dejlib ; $(call COMPILE,$@,$<)
 build/dejlib/%.d: src/dejlib/%.cpp | build/dejlib ; $(call GEN_PREREQ,$@,$<)
+build/layouts/box/%.d: src/layouts/box/%.cpp | build/layouts/box ; $(call GEN_PREREQ,$@,$<)
 build/%.o: src/%.cpp | build ; $(call COMPILE,$@,$<)
 build/%.d: src/%.cpp | build ; $(call GEN_PREREQ,$@,$<)
-build/layouts/box/%.o: src/layouts/box/%.cpp | build/layouts/box ; $(call COMPILE,$@,$<)
+# build/layouts/box/%.o: src/layouts/box/%.cpp | build/layouts/box ; $(call COMPILE,$@,$<)
 
 .PHONY: clean reset
 clean:: ; $(call DELTREE,build)
@@ -43,7 +43,9 @@ run: deploy/anika.exe
 .DELETE_ON_ERROR:
 
 
+include build/anika.d
 include $(DEJLIB_PREREQS)
+# include $(wildcard src/**.cpp:%.cpp=%.d)
 
 
 define GEN_PREREQ

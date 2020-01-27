@@ -6,7 +6,6 @@ template<class Derived>
 struct context_t
 {
 	HWND frame{nullptr};
-	multi_tracker_t tracker;
 
 	virtual ~context_t()
 	{
@@ -27,12 +26,13 @@ struct context_t
 		switch(m)
 		{
 			case WM_ERASEBKGND:
-				return 0;
+				break;
 
 			case WM_PAINT:
-				ctx->paint(BeginPaint(h, &ps));
+				BeginPaint(h, &ps);
+				if(ctx) ctx->paint(ps.hdc);
 				EndPaint(h, &ps);
-				return 0;
+				break;
 
 			case WM_KEYDOWN:
 				switch(w)
@@ -41,23 +41,25 @@ struct context_t
 						PostQuitMessage(0);
 						break;
 				}
-				return 0;
+				break;
 
 			case WM_CLOSE:
 				DestroyWindow(h);
-				return 0;
+				break;
 
 			case WM_DESTROY:
 				destroy(h);
-				return 0;
+				break;
 
 			case WM_CREATE:
 				create(h);
 				DragAcceptFiles(h, TRUE);
-				return 0;
+				break;
+
+			default: return DefWindowProc(h, m, w, l);
 		}
 
-		return DefWindowProc(h, m, w, l);
+		return 0;
 	}
 
 	static Derived * create(HWND h)

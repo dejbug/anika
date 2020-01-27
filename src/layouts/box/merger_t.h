@@ -27,7 +27,8 @@ struct merger_t
 
 		printf("mergers::join(%d, %d) (%d:%d, %d:%d)\n", src, dst, sx, sy, dx, dy);
 
-
+		return;
+/* 
 		// layout.boxes[dst].reset();
 		rect_t<long> grid_box = layout.grid.box({sx, sy});
 		layout.boxes[dst] = grid_box;
@@ -36,8 +37,7 @@ struct merger_t
 		temp_hdc_t hdc(frame);
 		layout.draw_single_area(hdc.handle, src);
 		layout.draw_single_frame(hdc.handle, src, true);
-
-		return;
+*/
 	}
 
 	void split(int src, int dst)

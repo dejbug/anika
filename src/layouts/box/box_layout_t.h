@@ -9,6 +9,31 @@
 #include "listeners.h"
 
 
+
+
+template<typename T>
+struct rects_t : rect_t<T>::vector
+{
+	using super = typename rect_t<T>::vector;
+	using cref_t = typename rect_t<T>::vector::const_reference;
+	using index_t = typename rect_t<T>::vector::size_type;
+
+	using ocref_t = std::optional<cref_t>;
+
+	inline bool contains(index_t index) const
+	{
+		return index >= 0 && index < super::size();
+	}
+
+	// inline ocref_t get(index_t index) const
+	// {
+		// return contains(index) ? *at(index) : ocref_t{};
+	// }
+};
+
+
+
+
 struct box_layout_listener1_i
 {
 	virtual void on_hover_box(int index, int col, int row) = 0;
@@ -27,8 +52,10 @@ struct box_layout_t :
 	using listener1_i = box_layout_listener1_i;
 	using listener2_i = box_layout_listener2_i;
 
+	using boxes_t = rects_t<LONG>;
+
 	grid_t grid;
-	rect_t<LONG>::vector boxes;
+	boxes_t boxes;
 	int roundness;
 
 	int last_index, last_col, last_row;
@@ -44,17 +71,16 @@ struct box_layout_t :
 	{
 	}
 
-	void draw(HDC hdc)
-	{
-		for(rect_t<LONG>::vector::iterator it=boxes.begin();
-				it<boxes.end(); ++it)
-			it->draw(hdc, roundness);
-	}
+	// void draw(HDC hdc)
+	// {
+		// for(auto const & box : boxes)
+			// box.draw(hdc, roundness);
+	// }
 
-	void draw(HDC hdc, int n)
-	{
-		boxes[n].draw(hdc, roundness);
-	}
+	// void draw(HDC hdc, int n)
+	// {
+		// boxes.at(n).draw(hdc, roundness);
+	// }
 
 	void setup(const rect_t<LONG> & r, int cols, int rows, int gap=0,
 			bool allow_rounding_errors=true)
@@ -87,24 +113,27 @@ struct box_layout_t :
 		last_index = last_col = last_row = -1;
 	}
 
-	bool hittest(int x, int y, int &index, int &col, int &row,
-			bool only_visible=true) const
+	bool hittest(int x, int y, int & index, int & col, int & row, bool only_visible=true) const
 	{
-		if(!grid.bounds.contains(x,y))
+		if (!grid.bounds.contains(x, y))
 			return false;
 
-		auto cell = grid.hittest(x, y);
-		index = grid.ctoi(cell);
 		// col = (x-grid.bounds.x) / grid.cw;
 		// row = (y-grid.bounds.y) / grid.ch;
 		// index = row * grid.cols + col;
 
-		if(index >= 0 && index < (int)boxes.size())
-		{
-			return !only_visible || boxes[index].contains(x, y);
-		}
+		auto const cell = grid.hittest(x, y);
+		col = cell.x;
+		row = cell.y;
+		index = grid.ctoi(cell);
 
-		return false;
+		if (!boxes.contains(index))
+			return false;
+
+		if (!only_visible)
+			return true;
+
+		return boxes[index].contains(x, y);
 	}
 
 	virtual void on_mouse_move(int x, int y)
@@ -140,7 +169,6 @@ struct box_layout_t :
 					on_leave_box(last_index, last_col, last_row);
 
 				last_index = last_col = last_row = -1;
-
 			}
 		}
 	}

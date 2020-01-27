@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
-#include <type_traits>
 #include <vector>
+#include <optional>
 
 
 template<typename T>
@@ -121,12 +121,39 @@ struct rect_t
 		return x_ >= x && x_ <= x+w && y_ >= y && y_ <= y+h;
 	}
 
-	void draw(HDC hdc, int radius=0) const
+	void draw(HDC hdc) const
+	{
+		static_assert(std::is_integral<T>::value, "Rectangle uses int");
+		Rectangle(hdc, x, y, x+w+1, y+h+1);
+	}
+
+	void draw(HDC hdc, int radius) const
 	{
 		static_assert(std::is_integral<T>::value, "RoundRect uses int");
 		RoundRect(hdc, x, y, x+w+1, y+h+1, radius, radius);
 	}
 };
+
+
+/* template<typename T>
+struct rects_t : rect_t<T>::vector
+{
+	using super = typename rect_t<T>::vector;
+	using cref_t = typename rect_t<T>::vector::const_reference;
+	using index_t = typename rect_t<T>::vector::size_type;
+
+	using ocref_t = std::optional<cref_t>;
+
+	inline bool contains(index_t index) const
+	{
+		return index >= 0 && index < super::size();
+	}
+
+	// inline ocref_t get(index_t index) const
+	// {
+		// return contains(index) ? *at(index) : ocref_t{};
+	// }
+}; */
 
 
 template<typename T>

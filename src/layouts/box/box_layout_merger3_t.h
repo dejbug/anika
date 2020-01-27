@@ -30,7 +30,7 @@ struct box_layout_merger3_t :
 	using listener2_i = box_layout_merger_listener2_i;
 	using listener3_i = box_layout_merger_listener3_i;
 
-	box_layout_t& layout;
+	box_layout_t & layout;
 	int src_box;
 	int last_box;
 	int drag_button;

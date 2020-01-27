@@ -26,6 +26,8 @@ struct box_layout_context_t :
 		public box_layout_merger3_t::listener3_i
 {
 	constexpr static char const * const name = "LAYOUT_BOX";
+
+	multi_tracker_t tracker;
 	box_layout2_t layout;
 	box_layout_merger3_t box_merger;
 	merger_t merger;
@@ -71,20 +73,13 @@ struct box_layout_context_t :
 
 	void paint(HDC dc)
 	{
+		printf("* paint\n");
+
 		mdc2_t mdc(dc);
-
 		mdc.clear(COLOR_BTNFACE);
-		// mdc.clear(color_t(RGB(220,200,180)));
 
-		on_pre_grid_draw(mdc.handle);
-
-		// temp_color_setter_t cs(mdc.handle);
-		// cs.fb(true, false);
-
-		// cs.fg(colors::mistyrose);
-		// grid.draw(mdc.handle);
-
-		on_post_grid_draw(mdc.handle);
+		layout.draw_areas(mdc.handle);
+		layout.draw_frames(mdc.handle);
 
 		mdc.flip();
 	}
@@ -110,16 +105,6 @@ struct box_layout_context_t :
 		merger.recalc_layout();
 	}
 
-	void on_pre_grid_draw(HDC hdc)
-	{
-		layout.draw_areas(hdc);
-	}
-
-	void on_post_grid_draw(HDC hdc)
-	{
-		layout.draw_frames(hdc);
-	}
-
 	virtual void on_mouse_wheel(int x, int y, int delta, unsigned int keys)
 	{
 		const int inc = delta > 0 ? +1 : -1;
@@ -136,31 +121,33 @@ struct box_layout_context_t :
 			layout.grid.rows += inc;
 
 			update_canvas();
-			layout.last_hilit_box = -1;
 			win::repaint_window(frame);
 		}
 	}
 
 	virtual void on_enter_box(int index, int col, int row)
 	{
+		// printf("* on_enter_box %d at (%d:%d)\n", index, col, row);
+
 		// win::repaint_window(frame);
 		temp_hdc_t hdc(frame);
-		layout.draw_single_area(hdc.handle, index);
+		layout.draw_single_area(hdc.handle, index, true);
 		layout.draw_single_frame(hdc.handle, index, true);
 	}
 
 	virtual void on_leave_box(int index, int col, int row)
 	{
+		// printf("* on_leave_box %d at (%d:%d)\n", index, col, row);
+
 		// win::repaint_window(frame);
 		temp_hdc_t hdc(frame);
-		layout.draw_single_area(hdc.handle, index);
+		layout.draw_single_area(hdc.handle, index, false);
 		layout.draw_single_frame(hdc.handle, index, false);
 	}
 
 	virtual void on_drop(int x, int y, std::vector<std::string>& names)
 	{
-		printf("* dropped %d files at (%d:%d)\n",
-			names.size(), x, y);
+		printf("* dropped %d files at (%d:%d)\n", names.size(), x, y);
 
 		int n = 0;
 
@@ -175,13 +162,13 @@ struct box_layout_context_t :
 		else if(button == 2)
 			merger.split(src, dst);
 
-		//~ InvalidateRect(frame, nullptr, TRUE);
-		//~ UpdateWindow(frame);
+		// InvalidateRect(frame, nullptr, FALSE);
+		// UpdateWindow(frame);
 	}
 
 	virtual void on_merge2(int button, trace_t const & trace)
 	{
-		printf("\t\t\t\t\t\r");
+		// printf("\t\t\t\t\t\r");
 
 		for(auto it = trace.begin(); it < trace.end(); ++it)
 		{
